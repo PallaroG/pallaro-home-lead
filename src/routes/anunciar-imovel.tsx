@@ -94,7 +94,7 @@ function ListingFormPage() {
   const [maxReached, setMaxReached] = useState<number>(1);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLFormElement>(null);
 
   const methods = useForm<ListingFormValues>({
     resolver: zodResolver(listingSchema),
