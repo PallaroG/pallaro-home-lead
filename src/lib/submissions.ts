@@ -2,13 +2,12 @@ import type { PropertySubmission } from "@/types/property";
 
 const STORAGE_KEY = "pallaro:submissions";
 
-export function saveSubmission(
-  submission: Omit<PropertySubmission, "id" | "createdAt">,
-): PropertySubmission {
+export function saveSubmission(draft: unknown): PropertySubmission {
   const full: PropertySubmission = {
-    ...submission,
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
+    status: "pending_review",
+    draft,
   };
   if (typeof window === "undefined") return full;
   const all = listSubmissions();
