@@ -1,4 +1,4 @@
-export type PropertyPurpose = "venda" | "aluguel";
+export type PropertyPurpose = "venda";
 export type PropertyType = "casa" | "apartamento" | "terreno" | "comercial" | "rural";
 
 export interface Property {
@@ -21,22 +21,6 @@ export interface Property {
 export interface PropertySubmission {
   id: string;
   createdAt: string;
-  property: {
-    title: string;
-    type: PropertyType;
-    purpose: PropertyPurpose;
-    address: string;
-    city: string;
-    price: number;
-    bedrooms: number;
-    bathrooms: number;
-    parkingSpots: number;
-    areaM2: number;
-    description: string;
-  };
-  owner: {
-    name: string;
-    email: string;
-    phone: string;
-  };
+  status: "pending_review";
+  draft: unknown;
 }
