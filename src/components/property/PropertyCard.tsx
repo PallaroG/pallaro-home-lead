@@ -34,12 +34,7 @@ export function PropertyCard({ property }: { property: Property }) {
             {property.neighborhood}, {property.city}
           </p>
         </div>
-        <p className="text-lg font-bold text-primary">
-          {formatBRL(property.price)}
-          {property.purpose === "aluguel" && (
-            <span className="ml-1 text-xs font-normal text-muted-foreground">/mês</span>
-          )}
-        </p>
+        <p className="text-lg font-bold text-primary">{formatBRL(property.price)}</p>
         <div className="mt-auto flex flex-wrap gap-4 border-t border-border pt-3 text-xs text-muted-foreground">
           {property.bedrooms > 0 && (
             <span className="flex items-center gap-1"><Bed className="h-4 w-4" />{property.bedrooms}</span>

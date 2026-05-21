@@ -14,7 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 const searchSchema = z.object({
-  purpose: fallback(z.enum(["venda", "aluguel"]).optional(), undefined),
   type: fallback(
     z.enum(["casa", "apartamento", "terreno", "comercial", "rural"]).optional(),
     undefined,
@@ -26,11 +25,10 @@ export const Route = createFileRoute("/imoveis")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Imóveis disponíveis — Pallaro" },
+      { title: "Imóveis à venda — Pallaro" },
       {
         name: "description",
-        content:
-          "Veja todos os imóveis disponíveis para venda e aluguel na Pallaro Seguros e Imóveis.",
+        content: "Imóveis à venda na Serra Gaúcha com a curadoria Pallaro Seguros e Imóveis.",
       },
     ],
   }),
@@ -38,17 +36,18 @@ export const Route = createFileRoute("/imoveis")({
 });
 
 function ListingPage() {
-  const { purpose, type, city } = Route.useSearch();
+  const { type, city } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const filtered = useMemo(() => {
-    return properties.filter((p) => {
-      if (purpose && p.purpose !== purpose) return false;
-      if (type && p.type !== type) return false;
-      if (city && p.city !== city) return false;
-      return true;
-    });
-  }, [purpose, type, city]);
+  const filtered = useMemo(
+    () =>
+      properties.filter((p) => {
+        if (type && p.type !== type) return false;
+        if (city && p.city !== city) return false;
+        return true;
+      }),
+    [type, city],
+  );
 
   const update = (patch: Record<string, string | undefined>) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
@@ -56,24 +55,13 @@ function ListingPage() {
   return (
     <div className="container mx-auto px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Imóveis disponíveis</h1>
+        <h1 className="text-3xl font-bold text-foreground">Imóveis à venda</h1>
         <p className="mt-1 text-muted-foreground">
           {filtered.length} {filtered.length === 1 ? "imóvel encontrado" : "imóveis encontrados"}
         </p>
       </div>
 
-      <div className="mb-8 grid gap-3 rounded-xl border border-border bg-card p-4 md:grid-cols-[1fr_1fr_1fr_auto]">
-        <Select
-          value={purpose ?? "all"}
-          onValueChange={(v) => update({ purpose: v === "all" ? undefined : v })}
-        >
-          <SelectTrigger><SelectValue placeholder="Finalidade" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas as finalidades</SelectItem>
-            <SelectItem value="venda">Venda</SelectItem>
-            <SelectItem value="aluguel">Aluguel</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="mb-8 grid gap-3 rounded-xl border border-border bg-card p-4 md:grid-cols-[1fr_1fr_auto]">
         <Select
           value={type ?? "all"}
           onValueChange={(v) => update({ type: v === "all" ? undefined : v })}
@@ -100,10 +88,7 @@ function ListingPage() {
             ))}
           </SelectContent>
         </Select>
-        <Button
-          variant="outline"
-          onClick={() => navigate({ search: {} })}
-        >
+        <Button variant="outline" onClick={() => navigate({ search: {} })}>
           Limpar filtros
         </Button>
       </div>

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as AnunciarImovelRouteImport } from './routes/anunciar-imovel'
 import { Route as AnunciarRouteImport } from './routes/anunciar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ImoveisIdRouteImport } from './routes/imoveis.$id'
@@ -23,6 +24,11 @@ const ImoveisRoute = ImoveisRouteImport.update({
 const ContatoRoute = ContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnunciarImovelRoute = AnunciarImovelRouteImport.update({
+  id: '/anunciar-imovel',
+  path: '/anunciar-imovel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnunciarRoute = AnunciarRouteImport.update({
@@ -44,6 +50,7 @@ const ImoveisIdRoute = ImoveisIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
+  '/anunciar-imovel': typeof AnunciarImovelRoute
   '/contato': typeof ContatoRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
+  '/anunciar-imovel': typeof AnunciarImovelRoute
   '/contato': typeof ContatoRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
@@ -59,21 +67,42 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/anunciar': typeof AnunciarRoute
+  '/anunciar-imovel': typeof AnunciarImovelRoute
   '/contato': typeof ContatoRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/anunciar' | '/contato' | '/imoveis' | '/imoveis/$id'
+  fullPaths:
+    | '/'
+    | '/anunciar'
+    | '/anunciar-imovel'
+    | '/contato'
+    | '/imoveis'
+    | '/imoveis/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/anunciar' | '/contato' | '/imoveis' | '/imoveis/$id'
-  id: '__root__' | '/' | '/anunciar' | '/contato' | '/imoveis' | '/imoveis/$id'
+  to:
+    | '/'
+    | '/anunciar'
+    | '/anunciar-imovel'
+    | '/contato'
+    | '/imoveis'
+    | '/imoveis/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/anunciar'
+    | '/anunciar-imovel'
+    | '/contato'
+    | '/imoveis'
+    | '/imoveis/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnunciarRoute: typeof AnunciarRoute
+  AnunciarImovelRoute: typeof AnunciarImovelRoute
   ContatoRoute: typeof ContatoRoute
   ImoveisRoute: typeof ImoveisRouteWithChildren
 }
@@ -92,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/contato'
       fullPath: '/contato'
       preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/anunciar-imovel': {
+      id: '/anunciar-imovel'
+      path: '/anunciar-imovel'
+      fullPath: '/anunciar-imovel'
+      preLoaderRoute: typeof AnunciarImovelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/anunciar': {
@@ -132,6 +168,7 @@ const ImoveisRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnunciarRoute: AnunciarRoute,
+  AnunciarImovelRoute: AnunciarImovelRoute,
   ContatoRoute: ContatoRoute,
   ImoveisRoute: ImoveisRouteWithChildren,
 }

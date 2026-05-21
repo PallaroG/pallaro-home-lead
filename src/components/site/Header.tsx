@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 const nav = [
   { to: "/", label: "Início" },
   { to: "/imoveis", label: "Imóveis" },
-  { to: "/anunciar", label: "Anunciar Imóvel" },
+  { to: "/anunciar-imovel", label: "Anunciar Imóvel" },
   { to: "/contato", label: "Contato" },
 ] as const;
 
@@ -44,7 +44,7 @@ export function Header() {
 
         <div className="hidden md:block">
           <Button asChild>
-            <Link to="/anunciar">Anunciar grátis</Link>
+            <Link to="/anunciar-imovel">Anunciar imóvel</Link>
           </Button>
         </div>
 
