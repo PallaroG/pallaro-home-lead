@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search, Shield, Award, Headphones, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -16,11 +15,11 @@ import { properties, cities } from "@/data/properties";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Pallaro Seguros e Imóveis — Imóveis na Serra Gaúcha" },
+      { title: "Pallaro Seguros e Imóveis — Imóveis à venda na Serra Gaúcha" },
       {
         name: "description",
         content:
-          "Encontre casas, apartamentos, terrenos e imóveis comerciais para venda e aluguel em Bento Gonçalves e região com a Pallaro.",
+          "Encontre casas, apartamentos, terrenos e imóveis comerciais à venda em Bento Gonçalves e região com a Pallaro.",
       },
     ],
   }),
@@ -29,7 +28,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const navigate = useNavigate();
-  const [purpose, setPurpose] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [city, setCity] = useState<string>("");
 
@@ -39,23 +37,18 @@ function HomePage() {
     e.preventDefault();
     navigate({
       to: "/imoveis",
-      search: {
-        purpose: purpose || undefined,
-        type: type || undefined,
-        city: city || undefined,
-      },
+      search: { type: type || undefined, city: city || undefined },
     });
   }
 
   return (
     <>
-      {/* Hero */}
       <section className="relative isolate overflow-hidden">
         <div
           className="absolute inset-0 -z-10 bg-cover bg-center"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(20,30,55,0.75), rgba(20,30,55,0.85)), url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1920')",
+              "linear-gradient(rgba(20,30,55,0.78), rgba(20,30,55,0.88)), url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1920')",
           }}
         />
         <div className="container mx-auto px-4 py-20 md:py-32">
@@ -67,22 +60,15 @@ function HomePage() {
               O imóvel certo para você na Serra Gaúcha
             </h1>
             <p className="mt-4 text-base text-primary-foreground/80 md:text-lg">
-              Casas, apartamentos, terrenos e imóveis comerciais em Bento Gonçalves e região,
-              com a tradição e confiança Pallaro.
+              Casas, apartamentos, terrenos e imóveis comerciais à venda em Bento Gonçalves e
+              região, com a tradição e confiança Pallaro.
             </p>
           </div>
 
           <form
             onSubmit={handleSearch}
-            className="mt-10 grid gap-3 rounded-xl border border-border bg-background p-4 shadow-xl md:grid-cols-[1fr_1fr_1fr_auto]"
+            className="mt-10 grid gap-3 rounded-xl border border-border bg-background p-4 shadow-xl md:grid-cols-[1fr_1fr_auto]"
           >
-            <Select value={purpose} onValueChange={setPurpose}>
-              <SelectTrigger><SelectValue placeholder="Finalidade" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="venda">Venda</SelectItem>
-                <SelectItem value="aluguel">Aluguel</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={type} onValueChange={setType}>
               <SelectTrigger><SelectValue placeholder="Tipo de imóvel" /></SelectTrigger>
               <SelectContent>
@@ -108,7 +94,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Featured */}
       <section className="container mx-auto px-4 py-16">
         <div className="flex items-end justify-between gap-4">
           <div>
@@ -133,7 +118,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Why */}
       <section className="bg-secondary/40 py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-center text-2xl font-bold text-foreground md:text-3xl">
@@ -157,17 +141,16 @@ function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="container mx-auto px-4 py-16">
         <div className="flex flex-col items-center justify-between gap-6 rounded-2xl bg-primary px-8 py-12 text-center text-primary-foreground md:flex-row md:text-left">
           <div>
-            <h2 className="text-2xl font-bold md:text-3xl">Quer anunciar seu imóvel?</h2>
+            <h2 className="text-2xl font-bold md:text-3xl">Quer vender seu imóvel?</h2>
             <p className="mt-2 text-primary-foreground/80">
-              Cadastre seu imóvel gratuitamente e nossa equipe entrará em contato.
+              Cadastre seu imóvel e nossa equipe fará a análise e divulgação profissional.
             </p>
           </div>
           <Button asChild size="lg" variant="secondary">
-            <Link to="/anunciar">Anunciar agora</Link>
+            <Link to="/anunciar-imovel">Anunciar imóvel</Link>
           </Button>
         </div>
       </section>
