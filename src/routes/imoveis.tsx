@@ -51,7 +51,7 @@ function ListingPage() {
   }, [purpose, type, city]);
 
   const update = (patch: Record<string, string | undefined>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
 
   return (
     <div className="container mx-auto px-4 py-10">
