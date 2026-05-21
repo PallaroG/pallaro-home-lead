@@ -20,5 +20,4 @@ export const propertyTypeLabels: Record<string, string> = {
 
 export const purposeLabels: Record<string, string> = {
   venda: "Venda",
-  aluguel: "Aluguel",
 };
