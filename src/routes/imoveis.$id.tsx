@@ -62,7 +62,7 @@ function PropertyDetail() {
         <div>
           <Carousel className="overflow-hidden rounded-xl">
             <CarouselContent>
-              {property.images.map((src, i) => (
+              {property.images.map((src: string, i: number) => (
                 <CarouselItem key={i}>
                   <div className="aspect-[16/10] overflow-hidden bg-muted">
                     <img src={src} alt={`${property.title} — foto ${i + 1}`} className="h-full w-full object-cover" />
