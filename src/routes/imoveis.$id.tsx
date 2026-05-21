@@ -112,15 +112,8 @@ function PropertyDetail() {
         </div>
 
         <aside className="h-fit rounded-xl border border-border bg-card p-6 lg:sticky lg:top-24">
-          <p className="text-sm text-muted-foreground">
-            {property.purpose === "aluguel" ? "Valor do aluguel" : "Valor de venda"}
-          </p>
-          <p className="mt-1 text-3xl font-bold text-primary">
-            {formatBRL(property.price)}
-            {property.purpose === "aluguel" && (
-              <span className="ml-1 text-sm font-normal text-muted-foreground">/mês</span>
-            )}
-          </p>
+          <p className="text-sm text-muted-foreground">Valor de venda</p>
+          <p className="mt-1 text-3xl font-bold text-primary">{formatBRL(property.price)}</p>
 
           <div className="mt-6 flex flex-col gap-3">
             <Button asChild size="lg" className="gap-2">
