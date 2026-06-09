@@ -13,7 +13,8 @@ export default defineConfig({
     server: { entry: "server" },
   },
   nitro: {
-    preset: "vercel",
+    // @ts-expect-error defaultPreset is hardcoded by Lovable config
     defaultPreset: "vercel",
-  },
+    preset: "vercel",
+  } as any,
 });
