@@ -176,7 +176,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          3. CATEGORIAS DE IMÓVEIS (Atualizado com imagens)
+          3. CATEGORIAS DE IMÓVEIS
           ========================================= */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -210,20 +210,25 @@ function HomePage() {
               key={cat.name} 
               to="/imoveis" 
               search={{ type: cat.route as any }}
-              className="group flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#C5A880]/50 hover:-translate-y-1"
+              // relative adicionado aqui para ancorar o ícone perfeitamente
+              className="group relative flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#C5A880]/50 hover:-translate-y-1"
             >
-              <div className="relative h-48 w-full overflow-hidden">
+              {/* Contêiner apenas da imagem */}
+              <div className="h-48 w-full overflow-hidden">
                 <img 
                   src={cat.image} 
                   alt={cat.name} 
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute bottom-0 left-1/2 flex h-14 w-14 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
-                  <cat.icon className="h-6 w-6" />
-                </div>
+              </div>
+
+              {/* Ícone posicionado com z-10 para ficar por cima do fundo branco e da foto */}
+              <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
+                <cat.icon className="h-6 w-6" />
               </div>
               
-              <div className="flex flex-col items-center pt-10 pb-6 px-4">
+              {/* Área de texto ajustada (pt-8 para dar espaço ao ícone flutuante) */}
+              <div className="flex flex-col items-center pt-8 pb-6 px-4">
                 <h3 className="font-serif text-xl font-semibold text-[#0B1528]">{cat.name}</h3>
                 <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#C5A880]">
                   Ver imóveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
