@@ -99,7 +99,7 @@ export function Header() {
             src={logoImg} 
             alt="Pallaro Seguros e Imóveis" 
             className={`transition-all duration-300 object-contain ${
-              isScrolled ? "h-10" : "h-14"
+              isScrolled ? "h-5" : "h-10"
             }`} 
           />
         </Link>
