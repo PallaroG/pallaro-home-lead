@@ -62,13 +62,13 @@ function HomePage() {
         />
         <div className="container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-2xl text-primary-foreground">
-            <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
               Pallaro Imóveis
             </p>
-            <h1 className="mt-3 text-4xl font-bold leading-tight md:text-5xl">
+            <h1 className="mt-4 font-serif text-4xl font-semibold leading-tight md:text-6xl">
               O imóvel certo para você na Serra Gaúcha
             </h1>
-            <p className="mt-4 text-base text-primary-foreground/80 md:text-lg">
+            <p className="mt-5 text-base leading-relaxed text-primary-foreground/80 md:text-lg">
               Casas, apartamentos, terrenos e imóveis comerciais à venda em Bento Gonçalves e
               região, com a tradição e confiança Pallaro.
             </p>
@@ -76,7 +76,7 @@ function HomePage() {
 
           <form
             onSubmit={handleSearch}
-            className="mt-10 grid gap-3 rounded-xl border border-border bg-background p-4 shadow-xl md:grid-cols-[1fr_1fr_auto]"
+            className="mt-12 grid gap-3 rounded-2xl border border-border bg-background p-5 shadow-elevated md:grid-cols-[1fr_1fr_auto]"
           >
             <Select value={type} onValueChange={setType}>
               <SelectTrigger><SelectValue placeholder="Tipo de imóvel" /></SelectTrigger>
