@@ -176,37 +176,66 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          3. CATEGORIAS DE IMÓVEIS
+          3. CATEGORIAS DE IMÓVEIS (Atualizado com imagens)
           ========================================= */}
-      <section className="container mx-auto px-4 py-12">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">O que procura?</p>
-        <h2 className="mt-2 text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-12">
-          Categorias de Imóveis
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { name: "Casas", icon: Home, route: "casa" },
-            { name: "Apartamentos", icon: Building2, route: "apartamento" },
-            { name: "Comerciais", icon: Building, route: "comercial" },
-            { name: "Terrenos", icon: Map, route: "terreno" },
+            { 
+              name: "Casas", 
+              icon: Home, 
+              route: "casa",
+              image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80" 
+            },
+            { 
+              name: "Apartamentos", 
+              icon: Building2, 
+              route: "apartamento",
+              image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80" 
+            },
+            { 
+              name: "Comerciais", 
+              icon: Building, 
+              route: "comercial",
+              image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80" 
+            },
+            { 
+              name: "Terrenos", 
+              icon: Map, 
+              route: "terreno",
+              image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80" 
+            },
           ].map((cat) => (
             <Link 
               key={cat.name} 
               to="/imoveis" 
               search={{ type: cat.route as any }}
-              className="group flex flex-col items-center justify-center rounded-md border border-gray-200 bg-white p-8 transition-all hover:shadow-lg hover:border-[#C5A880]"
+              className="group flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#C5A880]/50 hover:-translate-y-1"
             >
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#0B1528]/5 group-hover:bg-[#C5A880] transition-colors">
-                <cat.icon className="h-8 w-8 text-[#0B1528] group-hover:text-white transition-colors" />
+              <div className="relative h-48 w-full overflow-hidden">
+                <img 
+                  src={cat.image} 
+                  alt={cat.name} 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute bottom-0 left-1/2 flex h-14 w-14 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
+                  <cat.icon className="h-6 w-6" />
+                </div>
               </div>
-              <h3 className="font-semibold text-lg text-[#0B1528]">{cat.name}</h3>
+              
+              <div className="flex flex-col items-center pt-10 pb-6 px-4">
+                <h3 className="font-serif text-xl font-semibold text-[#0B1528]">{cat.name}</h3>
+                <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#C5A880]">
+                  Ver imóveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </div>
             </Link>
           ))}
         </div>
       </section>
 
       {/* =========================================
-          4. IMÓVEIS EM DESTAQUE (Mantido para não perder o layout)
+          4. IMÓVEIS EM DESTAQUE
           ========================================= */}
       <section className="container mx-auto px-4 py-16">
         <div className="flex items-end justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
@@ -294,7 +323,6 @@ function HomePage() {
           7. BANNER MISTO (Imóveis + Seguros)
           ========================================= */}
       <section className="bg-[#0B1528] text-white py-24 relative overflow-hidden">
-        {/* Elemento decorativo de fundo */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A880] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         
         <div className="container mx-auto px-4 relative z-10 text-center">
