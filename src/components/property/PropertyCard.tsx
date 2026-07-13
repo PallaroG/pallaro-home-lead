@@ -9,7 +9,7 @@ export function PropertyCard({ property }: { property: Property }) {
     <Link
       to="/imoveis/$id"
       params={{ id: property.id }}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-elevated"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <img
