@@ -45,7 +45,7 @@ export function Header() {
         {/* LOGO EM IMAGEM */}
         <Link to="/" className="flex items-center">
           <img 
-            src="/logo.png" 
+            src="src/logo.png" 
             alt="Pallaro Seguros e Imóveis" 
             // A logo diminui um pouquinho quando rola a página para economizar espaço
             className={`transition-all duration-300 object-contain ${
