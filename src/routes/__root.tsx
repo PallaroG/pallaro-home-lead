@@ -82,7 +82,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Imóveis para venda e aluguel na Serra Gaúcha. Casas, apartamentos, terrenos e imóveis comerciais com a tradição Pallaro.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap",
+      },
+      { rel: "stylesheet", href: appCss },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
