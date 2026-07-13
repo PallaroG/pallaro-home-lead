@@ -15,15 +15,17 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/90 backdrop-blur">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-primary text-primary-foreground backdrop-blur">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+        <Link to="/" className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
             <Home className="h-5 w-5" />
           </span>
           <span className="flex flex-col leading-tight">
-            <span className="text-sm font-semibold text-foreground">Pallaro</span>
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <span className="font-serif text-lg font-semibold tracking-wide text-primary-foreground">
+              Pallaro
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-accent">
               Seguros e Imóveis
             </span>
           </span>
@@ -34,8 +36,8 @@ export function Header() {
             <Link
               key={item.to}
               to={item.to}
-              className="rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition hover:bg-secondary hover:text-foreground"
-              activeProps={{ className: "text-primary" }}
+              className="rounded-md px-4 py-2 text-sm font-medium tracking-wide text-primary-foreground/75 transition hover:text-accent"
+              activeProps={{ className: "text-accent" }}
             >
               {item.label}
             </Link>
@@ -43,14 +45,22 @@ export function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <Button asChild>
+          <Button
+            asChild
+            className="bg-accent text-accent-foreground hover:bg-accent/90"
+          >
             <Link to="/anunciar-imovel">Anunciar imóvel</Link>
           </Button>
         </div>
 
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon" aria-label="Abrir menu">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Abrir menu"
+              className="text-primary-foreground hover:bg-white/10 hover:text-accent"
+            >
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
