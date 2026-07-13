@@ -1,74 +1,126 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
-// Adicionei o 'Blog' para ficar idêntico à sua imagem de referência
+// IMPORTANDO A LOGO DIRETAMENTE DA PASTA SRC
+import logoImg from "@/logo.png";
+
 const nav = [
-  { to: "/", label: "Início" },
-  { to: "/imoveis", label: "Comprar" },
-  { to: "/imoveis", label: "Alugar" },
-  { to: "/imoveis", label: "Comercial" },
-  { to: "/", label: "Sobre Nós" },
-  { to: "/", label: "Blog" }, 
-  { to: "/contato", label: "Contato" },
+  { id: "inicio", to: "/", label: "Início" },
+  { id: "comprar", to: "/imoveis", label: "Comprar" },
+  { id: "alugar", to: "/imoveis", label: "Alugar" },
+  { id: "comercial", to: "/imoveis", label: "Comercial" },
+  { id: "sobre-nos", to: "/", label: "Sobre Nós" },
+  { id: "blog", to: "/", label: "Blog" },
+  { id: "contato", to: "/contato", label: "Contato" },
 ] as any;
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeItem, setActiveItem] = useState("Início");
+  
+  const location = useLocation();
 
-  // Efeito para detectar quando o usuário rola a página
   useEffect(() => {
     const handleScroll = () => {
-      // Se rolar mais de 50 pixels para baixo, ativa o fundo sólido
       setIsScrolled(window.scrollY > 50);
+
+      if (location.pathname === "/") {
+        const sections = [
+          { id: "inicio", label: "Início" },
+          { id: "sobre-nos", label: "Sobre Nós" },
+          { id: "blog", label: "Blog" }
+        ];
+
+        let currentActive = "Início";
+
+        for (const section of sections) {
+          const element = document.getElementById(section.id);
+          if (element) {
+            if (window.scrollY >= element.offsetTop - 120) {
+              currentActive = section.label;
+            }
+          }
+        }
+        setActiveItem(currentActive);
+      }
     };
+
+    if (location.pathname === "/contato") {
+      setActiveItem("Contato");
+    } else if (location.pathname === "/imoveis") {
+      if (["Comprar", "Alugar", "Comercial"].indexOf(activeItem) === -1) {
+        setActiveItem(""); 
+      }
+    } else {
+      handleScroll(); 
+    }
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location.pathname, activeItem]);
+
+  const handleNavClick = (e: React.MouseEvent, item: any) => {
+    if (location.pathname === "/" && item.to === "/") {
+      const element = document.getElementById(item.id);
+      if (element) {
+        e.preventDefault(); 
+        window.scrollTo({
+          top: element.offsetTop - 90, 
+          behavior: "smooth",
+        });
+      } else if (item.id === "inicio") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      setActiveItem(item.label);
+    } else {
+      setActiveItem(item.label);
+    }
+    setOpen(false); 
+  };
 
   return (
     <header 
-      // Mudamos de 'sticky' para 'fixed' para o header sobrepor a imagem do Hero.
-      // O background muda dinamicamente com base no estado 'isScrolled'.
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         isScrolled 
-          ? "bg-[#0B1528] shadow-lg py-2" // Fundo azul marinho sólido ao rolar
-          : "bg-gradient-to-b from-[#0B1528]/90 to-transparent py-6" // Degradê escuro no topo
+          ? "bg-[#0B1528] shadow-lg py-2"
+          : "bg-gradient-to-b from-[#0B1528]/90 to-transparent py-6"
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-4">
         
-        {/* LOGO EM IMAGEM */}
-        <Link to="/" className="flex items-center">
+        <Link to="/" onClick={(e) => handleNavClick(e, { id: "inicio", to: "/", label: "Início" })} className="flex items-center">
+          {/* USANDO A LOGO IMPORTADA AQUI */}
           <img 
-            src="src/logo.png" 
+            src={logoImg} 
             alt="Pallaro Seguros e Imóveis" 
-            // A logo diminui um pouquinho quando rola a página para economizar espaço
             className={`transition-all duration-300 object-contain ${
               isScrolled ? "h-10" : "h-14"
             }`} 
           />
         </Link>
 
-        {/* MENU DESKTOP */}
         <nav className="hidden items-center gap-6 lg:flex">
           {nav.map((item: any) => (
             <Link
               key={item.label}
               to={item.to}
-              className="px-1 py-2 text-sm font-medium tracking-wide text-white/90 transition hover:text-[#C5A880]"
-              activeProps={{ className: "text-[#C5A880] border-b-2 border-[#C5A880]" }}
+              onClick={(e) => handleNavClick(e, item)}
+              className={`px-1 py-2 text-sm font-medium tracking-wide transition-all ${
+                activeItem === item.label
+                  ? "text-[#C5A880] border-b-2 border-[#C5A880]"
+                  : "text-white/90 hover:text-[#C5A880]"
+              }`}
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        {/* BOTÃO CTA E WHATSAPP DESKTOP */}
         <div className="hidden lg:flex items-center gap-5">
           <Button
             asChild
@@ -77,9 +129,8 @@ export function Header() {
             <Link to="/anunciar-imovel">Avaliar meu Imóvel</Link>
           </Button>
           
-          {/* Ícone do WhatsApp */}
           <a 
-            href="https://wa.me/5511999999999" // Substitua pelo número real depois
+            href="https://wa.me/5511999999999" 
             target="_blank" 
             rel="noreferrer" 
             className="text-white hover:text-[#25D366] transition-colors flex items-center justify-center h-10 w-10 rounded-full border border-white/20 hover:border-[#25D366]"
@@ -90,7 +141,6 @@ export function Header() {
           </a>
         </div>
 
-        {/* MENU MOBILE */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="lg:hidden">
             <Button
@@ -104,15 +154,18 @@ export function Header() {
           </SheetTrigger>
           <SheetContent side="right" className="w-72 bg-[#0B1528] border-l-white/10 text-white">
             <SheetTitle className="text-white text-left mt-4">
-               <img src="/logo.png" alt="Pallaro" className="h-8 object-contain" />
+               {/* USANDO A LOGO IMPORTADA AQUI TAMBÉM */}
+               <img src={logoImg} alt="Pallaro" className="h-8 object-contain" />
             </SheetTitle>
             <nav className="mt-8 flex flex-col gap-2">
               {nav.map((item: any) => (
                 <Link
                   key={item.label}
                   to={item.to}
-                  onClick={() => setOpen(false)}
-                  className="rounded-md px-3 py-3 text-base font-medium text-white/90 hover:bg-white/10 hover:text-[#C5A880] transition-colors"
+                  onClick={(e) => handleNavClick(e, item)}
+                  className={`rounded-md px-3 py-3 text-base font-medium transition-colors ${
+                    activeItem === item.label ? "text-[#C5A880] bg-white/5" : "text-white/90 hover:bg-white/10 hover:text-[#C5A880]"
+                  }`}
                 >
                   {item.label}
                 </Link>
