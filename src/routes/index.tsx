@@ -3,7 +3,8 @@ import { useState } from "react";
 import { 
   Search, Shield, Award, Headphones, ArrowRight, Home, Building, 
   Building2, Map, MessageSquare, Scale, BarChart3, Megaphone, Users, ShieldCheck,
-  Key, BadgeDollarSign, CalendarCheck, TrendingUp
+  Key, BadgeDollarSign, CalendarCheck, TrendingUp, ClipboardList, Handshake, 
+  FileText, Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -210,10 +211,8 @@ function HomePage() {
               key={cat.name} 
               to="/imoveis" 
               search={{ type: cat.route as any }}
-              // relative adicionado aqui para ancorar o ícone perfeitamente
               className="group relative flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#C5A880]/50 hover:-translate-y-1"
             >
-              {/* Contêiner apenas da imagem */}
               <div className="h-48 w-full overflow-hidden">
                 <img 
                   src={cat.image} 
@@ -222,12 +221,10 @@ function HomePage() {
                 />
               </div>
 
-              {/* Ícone posicionado com z-10 para ficar por cima do fundo branco e da foto */}
               <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
                 <cat.icon className="h-6 w-6" />
               </div>
               
-              {/* Área de texto ajustada (pt-8 para dar espaço ao ícone flutuante) */}
               <div className="flex flex-col items-center pt-8 pb-6 px-4">
                 <h3 className="font-serif text-xl font-semibold text-[#0B1528]">{cat.name}</h3>
                 <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#C5A880]">
@@ -343,6 +340,122 @@ function HomePage() {
           <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
             Conheça a Pallaro Seguros
           </Button>
+        </div>
+      </section>
+
+      {/* =========================================
+          8. COMO FUNCIONA (Passo a passo)
+          ========================================= */}
+      <section className="container mx-auto px-4 py-24">
+        <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
+          Como funciona
+        </h2>
+        
+        <div className="relative">
+          {/* Linha conectora (visível apenas em telas maiores) */}
+          <div className="hidden lg:block absolute top-10 left-[8%] right-[8%] h-[2px] bg-gray-200 -z-10"></div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+            {[
+              { step: "01", icon: ClipboardList, title: "Conte o que procura" },
+              { step: "02", icon: Search, title: "Receba imóveis selecionados" },
+              { step: "03", icon: CalendarCheck, title: "Agende visita" },
+              { step: "04", icon: Handshake, title: "Negociação" },
+              { step: "05", icon: FileText, title: "Documentação" },
+              { step: "06", icon: Key, title: "Entrega das chaves" },
+            ].map((item, index) => (
+              <div key={item.step} className="flex flex-col items-center text-center relative group">
+                <div className="h-20 w-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center relative mb-6 transition-all duration-300 group-hover:border-[#C5A880] shadow-sm">
+                  <item.icon className="h-8 w-8 text-[#0B1528]" />
+                  {/* Círculo dourado com o número do passo */}
+                  <span className="absolute -bottom-2 bg-[#C5A880] text-[#0B1528] text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
+                    {item.step}
+                  </span>
+                </div>
+                <h3 className="font-semibold text-[#0B1528] max-w-[140px] leading-tight">
+                  {item.title}
+                </h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          9. DEPOIMENTOS
+          ========================================= */}
+      <section className="bg-[#F8F9FA] py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
+            O que nossos clientes dizem
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Juliana Mendes",
+                text: '"Atendimento impecável! A Pallaro Imóveis me ajudou a encontrar o apartamento perfeito para minha família. Recomendo!"'
+              },
+              {
+                name: "Carlos Eduardo",
+                text: '"Vendi meu imóvel com rapidez e segurança. Toda a equipe foi muito profissional do início ao fim do processo."'
+              },
+              {
+                name: "Mariana Souza",
+                text: '"Transparência, confiança e agilidade. Superaram minhas expectativas!"'
+              }
+            ].map((review, i) => (
+              <div key={i} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                <div>
+                  <div className="flex gap-1 mb-6">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className="h-5 w-5 fill-[#C5A880] text-[#C5A880]" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 leading-relaxed italic mb-8">
+                    {review.text}
+                  </p>
+                </div>
+                <h4 className="font-bold text-[#0B1528] font-serif">{review.name}</h4>
+              </div>
+            ))}
+          </div>
+          
+          {/* Bolinhas de paginação decorativas */}
+          <div className="flex justify-center gap-2 mt-12">
+            <div className="h-2 w-2 rounded-full bg-[#C5A880]"></div>
+            <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+            <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          10. CTA FINAL DE AVALIAÇÃO
+          ========================================= */}
+      <section className="container mx-auto px-4 py-16 mb-8">
+        <div className="relative isolate overflow-hidden rounded-2xl bg-[#0B1528] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+          {/* Imagem de Fundo (opcional, bem transparente) */}
+          <div
+            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920')" }}
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0B1528] via-[#0B1528]/90 to-transparent"></div>
+
+          <div className="relative z-10 text-center md:text-left max-w-xl">
+            <h2 className="text-3xl font-serif font-bold text-white md:text-4xl">
+              Quer vender seu imóvel?
+            </h2>
+            <p className="mt-4 text-white/80 text-lg">
+              Receba uma avaliação profissional e gratuita com base nos dados reais do mercado atual.
+            </p>
+          </div>
+          
+          <div className="relative z-10 shrink-0">
+            <Button asChild size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-10 py-7 text-lg transition-all rounded-sm shadow-xl hover:-translate-y-1">
+              <Link to="/anunciar-imovel">Solicitar avaliação</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </>
