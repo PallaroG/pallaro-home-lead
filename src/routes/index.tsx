@@ -1,6 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Shield, Award, Headphones, ArrowRight, Home, Building } from "lucide-react";
+import { 
+  Search, Shield, Award, Headphones, ArrowRight, Home, Building, 
+  Building2, Map, MessageSquare, Scale, BarChart3, Megaphone, Users, ShieldCheck,
+  Key, BadgeDollarSign, CalendarCheck, TrendingUp
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,7 +32,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const navigate = useNavigate();
-  // Estado para controlar a aba ativa (Comprar, Alugar, Comercial)
   const [activeTab, setActiveTab] = useState("comprar");
   
   const [type, setType] = useState<string>("");
@@ -50,10 +53,9 @@ function HomePage() {
   return (
     <>
       {/* =========================================
-          1. HERO SECTION (Fundo, Textos e Botões)
+          1. HERO SECTION
           ========================================= */}
       <section id="inicio" className="relative isolate pt-36 pb-48 md:pt-48 md:pb-64 overflow-hidden">
-        {/* Imagem de Fundo Escurecida e com Degradê */}
         <div
           className="absolute inset-0 -z-10 bg-cover bg-center"
           style={{
@@ -92,8 +94,6 @@ function HomePage() {
           ========================================= */}
       <section className="container mx-auto px-4 -mt-28 relative z-10 mb-20">
         <div className="bg-[#0B1528] rounded-md shadow-2xl border border-white/10 overflow-hidden">
-          
-          {/* Abas Superiores */}
           <div className="flex border-b border-white/10 bg-[#0B1528]/50">
             <button 
               onClick={() => setActiveTab("comprar")}
@@ -115,35 +115,23 @@ function HomePage() {
             </button>
           </div>
 
-          {/* Formulário de Filtros */}
           <form onSubmit={handleSearch} className="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-4 items-end">
-            
-            {/* O que você procura? */}
             <div className="col-span-1 md:col-span-3 lg:col-span-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                <Input 
-                  placeholder="O que você procura?" 
-                  className="pl-10 bg-white border-0 text-black h-12 rounded-sm focus-visible:ring-[#C5A880]" 
-                />
+                <Input placeholder="O que você procura?" className="pl-10 bg-white border-0 text-black h-12 rounded-sm focus-visible:ring-[#C5A880]" />
               </div>
             </div>
-
-            {/* Cidade */}
             <div className="col-span-1 lg:col-span-2">
               <Select value={city} onValueChange={setCity}>
                 <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
                   <SelectValue placeholder="Cidade" />
                 </SelectTrigger>
                 <SelectContent>
-                  {cities.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
+                  {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Bairro (Placeholder por enquanto) */}
             <div className="col-span-1 lg:col-span-2">
               <Select>
                 <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
@@ -155,8 +143,6 @@ function HomePage() {
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Tipo de imóvel */}
             <div className="col-span-1 lg:col-span-2">
               <Select value={type} onValueChange={setType}>
                 <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
@@ -170,8 +156,6 @@ function HomePage() {
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Faixa de Valor */}
             <div className="col-span-1 lg:col-span-2">
               <Select>
                 <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
@@ -184,63 +168,87 @@ function HomePage() {
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Botão Buscar */}
-            <Button 
-              type="submit" 
-              className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] h-12 w-full col-span-1 md:col-span-3 lg:col-span-1 transition-colors rounded-sm"
-            >
+            <Button type="submit" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] h-12 w-full col-span-1 md:col-span-3 lg:col-span-1 transition-colors rounded-sm">
               Buscar
             </Button>
-
           </form>
         </div>
       </section>
 
       {/* =========================================
-          RESTANTE DA PÁGINA (Para não quebrar)
+          3. CATEGORIAS DE IMÓVEIS
           ========================================= */}
       <section className="container mx-auto px-4 py-12">
-        <div className="flex items-end justify-between gap-4">
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">O que procura?</p>
+        <h2 className="mt-2 text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-12">
+          Categorias de Imóveis
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[
+            { name: "Casas", icon: Home, route: "casa" },
+            { name: "Apartamentos", icon: Building2, route: "apartamento" },
+            { name: "Comerciais", icon: Building, route: "comercial" },
+            { name: "Terrenos", icon: Map, route: "terreno" },
+          ].map((cat) => (
+            <Link 
+              key={cat.name} 
+              to="/imoveis" 
+              search={{ type: cat.route as any }}
+              className="group flex flex-col items-center justify-center rounded-md border border-gray-200 bg-white p-8 transition-all hover:shadow-lg hover:border-[#C5A880]"
+            >
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#0B1528]/5 group-hover:bg-[#C5A880] transition-colors">
+                <cat.icon className="h-8 w-8 text-[#0B1528] group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="font-semibold text-lg text-[#0B1528]">{cat.name}</h3>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* =========================================
+          4. IMÓVEIS EM DESTAQUE (Mantido para não perder o layout)
+          ========================================= */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="flex items-end justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">Seleção Pallaro</p>
             <h2 className="mt-2 text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif">
               Imóveis em destaque
             </h2>
-            <p className="mt-2 text-gray-600">
-              Seleção de oportunidades cuidadosamente escolhidas pela nossa equipe.
-            </p>
           </div>
-          <Link
-            to="/imoveis"
-            className="hidden items-center gap-1 text-sm font-medium text-[#C5A880] hover:underline md:inline-flex"
-          >
+          <Link to="/imoveis" className="hidden items-center gap-1 text-sm font-medium text-[#C5A880] hover:underline md:inline-flex">
             Ver todos <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((p) => (
             <PropertyCard key={p.id} property={p} />
           ))}
         </div>
       </section>
 
-      <section className="bg-gray-50 py-24 mt-12">
+      {/* =========================================
+          5. DIFERENCIAIS DA PALLARO
+          ========================================= */}
+      <section id="sobre-nos" className="bg-[#F8F9FA] py-24">
         <div className="container mx-auto px-4">
           <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">
             Nossos diferenciais
           </p>
-          <h2 className="mt-2 text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif">
-            Por que escolher a Pallaro
+          <h2 className="mt-2 text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif max-w-2xl mx-auto">
+            Por que escolher a Pallaro para o seu próximo negócio?
           </h2>
-          <div className="mt-14 grid gap-8 md:grid-cols-3">
+          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { icon: Shield, title: "Tradição e confiança", text: "Décadas de atuação consolidando relacionamentos no mercado." },
-              { icon: Award, title: "Curadoria de imóveis", text: "Cada imóvel é avaliado pela nossa equipe antes de ser anunciado." },
-              { icon: Headphones, title: "Atendimento próximo", text: "Time dedicado para acompanhar você do primeiro contato à assinatura." },
+              { icon: MessageSquare, title: "Atendimento consultivo", text: "Foco total em entender as suas reais necessidades e perfil." },
+              { icon: Scale, title: "Segurança jurídica", text: "Análise rigorosa e transparente de toda a documentação envolvida." },
+              { icon: BarChart3, title: "Avaliação de mercado", text: "Precificação justa, realista e condizente com a atualidade." },
+              { icon: Megaphone, title: "Divulgação profissional", text: "Estratégias avançadas de marketing para destacar o seu imóvel." },
+              { icon: Users, title: "Acompanhamento completo", text: "Lado a lado consigo, do primeiro contacto até à entrega das chaves." },
+              { icon: ShieldCheck, title: "Integração com seguros", text: "Opções de proteção total para o seu património num só lugar." },
             ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition duration-300 hover:shadow-md">
-                <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#C5A880]/10 text-[#C5A880]">
+              <div key={title} className="rounded-md border border-gray-200 bg-white p-8 shadow-sm transition duration-300 hover:shadow-md hover:-translate-y-1">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1528]/5 text-[#C5A880]">
                   <Icon className="h-6 w-6" />
                 </span>
                 <h3 className="mt-6 text-xl font-semibold text-[#0B1528]">{title}</h3>
@@ -248,6 +256,60 @@ function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          6. NOSSOS SERVIÇOS
+          ========================================= */}
+      <section className="container mx-auto px-4 py-24">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">Soluções Completas</p>
+            <h2 className="mt-2 text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif">
+              Tudo o que precisa num só lugar.
+            </h2>
+            <p className="mt-6 text-gray-600 leading-relaxed text-lg">
+              Simplificamos a gestão do seu património imobiliário. A nossa equipa de especialistas está preparada para orientá-lo em todas as etapas da sua jornada.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            {[
+              { icon: Key, title: "Compra", desc: "Encontre o imóvel ideal" },
+              { icon: BadgeDollarSign, title: "Venda", desc: "Negociações ágeis" },
+              { icon: CalendarCheck, title: "Locação", desc: "Gestão sem dores de cabeça" },
+              { icon: TrendingUp, title: "Investimentos", desc: "Alta rentabilidade" },
+            ].map((srv) => (
+              <div key={srv.title} className="border border-gray-100 bg-white p-6 rounded-md shadow-sm">
+                <srv.icon className="h-8 w-8 text-[#0B1528] mb-4" />
+                <h4 className="font-semibold text-lg text-[#0B1528]">{srv.title}</h4>
+                <p className="text-sm text-gray-500 mt-1">{srv.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          7. BANNER MISTO (Imóveis + Seguros)
+          ========================================= */}
+      <section className="bg-[#0B1528] text-white py-24 relative overflow-hidden">
+        {/* Elemento decorativo de fundo */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A880] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <p className="text-[#C5A880] font-semibold tracking-[0.25em] uppercase text-sm mb-4">
+            Uma empresa. Duas especialidades.
+          </p>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8">
+            Imóveis <span className="text-gray-400 font-light">+</span> Seguros
+          </h2>
+          <p className="max-w-2xl mx-auto text-white/80 text-lg mb-10 leading-relaxed">
+            Proteja o seu novo património no momento da aquisição. Oferecemos soluções completas em seguros residenciais, comerciais, de vida e consórcios.
+          </p>
+          <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
+            Conheça a Pallaro Seguros
+          </Button>
         </div>
       </section>
     </>
