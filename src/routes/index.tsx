@@ -37,7 +37,16 @@ function HomePage() {
     e.preventDefault();
     navigate({
       to: "/imoveis",
-      search: { type: type || undefined, city: city || undefined },
+      search: {
+        type: (type || undefined) as
+          | "apartamento"
+          | "casa"
+          | "comercial"
+          | "rural"
+          | "terreno"
+          | undefined,
+        city: city || undefined,
+      },
     });
   }
 
