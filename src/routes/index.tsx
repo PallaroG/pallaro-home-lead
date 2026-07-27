@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { 
   Search, 
   Home, 
@@ -19,7 +19,9 @@ import {
   CalendarCheck,
   Handshake,
   FileText,
-  Star
+  Star,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,12 +47,59 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+// Array com 10 depoimentos com linguagem humanizada e próxima
+const testimonials = [
+  {
+    name: "Mariana Costa",
+    text: '"Gente, atendimento nota mil! A equipe me ajudou a achar uma casa com quintal pros meus cachorros sem burocracia nenhuma. Recomendo de olhos fechados!"'
+  },
+  {
+    name: "Carlos Eduardo",
+    text: '"Vendi meu apê bem mais rápido do que eu imaginava. O pessoal cuidou de toda aquela papelada chata, eu só tive o trabalho de assinar."'
+  },
+  {
+    name: "Juliana Mendes",
+    text: '"Eu tava morrendo de medo de comprar meu primeiro imóvel e cair em furada. A consultoria deles me deu uma paz absurda. Valeu demais!"'
+  },
+  {
+    name: "Rafael Souza",
+    text: '"Sabe aquela sensação de que o corretor realmente tá te ouvindo? Foi assim desde o primeiro dia. Achei meu cantinho perfeito."'
+  },
+  {
+    name: "Amanda Ferreira",
+    text: '"Aluguei minha sala comercial com eles e foi super tranquilo. O contrato é claro, sem letrinhas miúdas. Sensacional."'
+  },
+  {
+    name: "Marcos Lima",
+    text: '"Profissionais demais! Tiraram umas fotos incríveis da minha casa e em duas semanas já tínhamos negócio fechado."'
+  },
+  {
+    name: "Beatriz Rocha",
+    text: '"Eles entenderam de cara que eu precisava de um lugar perto do metrô. Não ficaram me empurrando imóvel nada a ver. Top!"'
+  },
+  {
+    name: "Tiago Nogueira",
+    text: '"Sempre achei que mexer com financiamento era um pesadelo, mas o pessoal me explicou tudo desenhadinho. Deu tudo certo!"'
+  },
+  {
+    name: "Roberto Silva",
+    text: '"Comprei pra investir e o retorno foi ótimo. A avaliação que eles fazem do mercado é muito pé no chão, sem ilusão."'
+  },
+  {
+    name: "Fernanda Oliveira",
+    text: '"Zero dor de cabeça. Desde a primeira visita até a entrega das chaves, me senti super acompanhada. Vocês arrasam!"'
+  }
+];
+
 function HomePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("comprar");
   
   const [type, setType] = useState<string>("");
   const [city, setCity] = useState<string>("");
+
+  // Referência para o carrossel de depoimentos
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -62,6 +111,17 @@ function HomePage() {
       },
     });
   }
+
+  // Função para rolar o carrossel
+  const scrollTestimonials = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = carouselRef.current.clientWidth;
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <>
@@ -254,10 +314,7 @@ function HomePage() {
       <section id="sobre-nos" className="w-full bg-white py-24 px-4 md:px-8">
         <div className="container mx-auto max-w-7xl">
           
-          {/* PARTE SUPERIOR: Proposta de Valor e Diferenciais */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            
-            {/* Coluna da Esquerda: Chamada Principal */}
             <div className="flex flex-col justify-start">
               <span className="text-sm font-bold uppercase tracking-[0.25em] text-[#C5A880] mb-4">
                 Por que escolher a Pallaro
@@ -273,7 +330,6 @@ function HomePage() {
               </div>
             </div>
 
-            {/* Coluna da Direita: Grid de Diferenciais */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
               {[
                 { icon: UserCircle, title: "Atendimento consultivo", text: "Entendemos sua necessidade e oferecemos as melhores opções." },
@@ -294,7 +350,6 @@ function HomePage() {
             </div>
           </div>
 
-          {/* PARTE INFERIOR: Nossos Serviços */}
           <div className="border-t border-gray-200 pt-16 relative mt-12">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-center">
               <h2 className="text-3xl font-serif font-semibold text-[#0B1528]">Nossos serviços</h2>
@@ -354,7 +409,6 @@ function HomePage() {
         </h2>
         
         <div className="relative">
-          {/* Linha conectora (visível apenas em telas maiores) */}
           <div className="hidden lg:block absolute top-10 left-[8%] right-[8%] h-[2px] bg-gray-200 -z-10"></div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
@@ -369,7 +423,6 @@ function HomePage() {
               <div key={item.step} className="flex flex-col items-center text-center relative group">
                 <div className="h-20 w-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center relative mb-6 transition-all duration-300 group-hover:border-[#C5A880] shadow-sm">
                   <item.icon className="h-8 w-8 text-[#0B1528]" />
-                  {/* Círculo dourado com o número do passo */}
                   <span className="absolute -bottom-2 bg-[#C5A880] text-[#0B1528] text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
                     {item.step}
                   </span>
@@ -384,30 +437,44 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          7. DEPOIMENTOS
+          7. DEPOIMENTOS (Carrossel Interativo)
           ========================================= */}
       <section className="bg-[#F8F9FA] py-24">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
-            O que nossos clientes dizem
-          </h2>
+          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+            <h2 className="text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif text-center md:text-left">
+              O que nossos clientes dizem
+            </h2>
+            {/* Controles do Carrossel (Flechas) */}
+            <div className="flex gap-3">
+              <button 
+                onClick={() => scrollTestimonials('left')} 
+                className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#C5A880] hover:text-white hover:border-[#C5A880] transition-all"
+                aria-label="Ver anterior"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button 
+                onClick={() => scrollTestimonials('right')} 
+                className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#C5A880] hover:text-white hover:border-[#C5A880] transition-all"
+                aria-label="Ver próximo"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </div>
+          </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Juliana Mendes",
-                text: '"Atendimento impecável! A Pallaro Imóveis me ajudou a encontrar o apartamento perfeito para minha família. Recomendo!"'
-              },
-              {
-                name: "Carlos Eduardo",
-                text: '"Vendi meu imóvel com rapidez e segurança. Toda a equipe foi muito profissional do início ao fim do processo."'
-              },
-              {
-                name: "Mariana Souza",
-                text: '"Transparência, confiança e agilidade. Superaram minhas expectativas!"'
-              }
-            ].map((review, i) => (
-              <div key={i} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+          {/* Trilha do Carrossel */}
+          <div 
+            ref={carouselRef}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {testimonials.map((review, i) => (
+              <div 
+                key={i} 
+                className="min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] snap-center shrink-0 bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between"
+              >
                 <div>
                   <div className="flex gap-1 mb-6">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -423,12 +490,6 @@ function HomePage() {
             ))}
           </div>
           
-          {/* Bolinhas de paginação decorativas */}
-          <div className="flex justify-center gap-2 mt-12">
-            <div className="h-2 w-2 rounded-full bg-[#C5A880]"></div>
-            <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-            <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-          </div>
         </div>
       </section>
 
@@ -437,7 +498,6 @@ function HomePage() {
           ========================================= */}
       <section className="container mx-auto px-4 py-16 mb-8">
         <div className="relative isolate overflow-hidden rounded-2xl bg-[#0B1528] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Imagem de Fundo (opcional, bem transparente) */}
           <div
             className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920')" }}
