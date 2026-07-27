@@ -53,7 +53,7 @@ function ListingPage() {
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
 
   return (
-    <div className="container mx-auto px-4 py-10">
+    <div className="container mx-auto px-4 pt-32 pb-10 md:pt-40">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">Imóveis à venda</h1>
         <p className="mt-1 text-muted-foreground">
