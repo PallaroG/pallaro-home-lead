@@ -163,8 +163,8 @@ function ListingFormPage() {
   }
 
   return (
-    <div className="bg-secondary/30">
-      <div className="container mx-auto max-w-5xl px-4 py-10 md:py-16">
+    <div className="bg-secondary/30 pt-32 md:pt-40">
+      <div className="container mx-auto max-w-5xl px-4 pb-10 md:pb-16">
         <header className="mb-8 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-primary">
             Anunciar imóvel
@@ -230,7 +230,7 @@ function ListingFormPage() {
 
 function SuccessScreen({ id }: { id: string }) {
   return (
-    <div className="bg-secondary/30 py-16">
+    <div className="bg-secondary/30 pt-32 pb-16 md:pt-40">
       <div className="container mx-auto max-w-2xl px-4 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
           <CheckCircle2 className="h-8 w-8" />
