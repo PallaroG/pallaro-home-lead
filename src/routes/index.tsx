@@ -1,10 +1,25 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { 
-  Search, Shield, Award, Headphones, ArrowRight, Home, Building, 
-  Building2, Map, MessageSquare, Scale, BarChart3, Megaphone, Users, ShieldCheck,
-  Key, BadgeDollarSign, CalendarCheck, TrendingUp, ClipboardList, Handshake, 
-  FileText, Star
+  Search, 
+  Home, 
+  Building, 
+  Building2, 
+  Map, 
+  ArrowRight,
+  UserCircle,
+  ShieldCheck,
+  LineChart,
+  Megaphone,
+  LifeBuoy,
+  CheckCircle,
+  Key,
+  TrendingUp,
+  ClipboardList,
+  CalendarCheck,
+  Handshake,
+  FileText,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,8 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PropertyCard } from "@/components/property/PropertyCard";
-import { properties, cities } from "@/data/properties";
+import { cities } from "@/data/properties";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,8 +51,6 @@ function HomePage() {
   
   const [type, setType] = useState<string>("");
   const [city, setCity] = useState<string>("");
-
-  const featured = properties.filter((p) => p.featured);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -237,92 +249,82 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          4. IMÓVEIS EM DESTAQUE
+          4. PROPOSTA DE VALOR E SERVIÇOS 
           ========================================= */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="flex items-end justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">Seleção Pallaro</p>
-            <h2 className="mt-2 text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif">
-              Imóveis em destaque
-            </h2>
-          </div>
-          <Link to="/imoveis" className="hidden items-center gap-1 text-sm font-medium text-[#C5A880] hover:underline md:inline-flex">
-            Ver todos <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
-        </div>
-      </section>
-
-      {/* =========================================
-          5. DIFERENCIAIS DA PALLARO
-          ========================================= */}
-      <section id="sobre-nos" className="bg-[#F8F9FA] py-24">
-        <div className="container mx-auto px-4">
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">
-            Nossos diferenciais
-          </p>
-          <h2 className="mt-2 text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif max-w-2xl mx-auto">
-            Por que escolher a Pallaro para o seu próximo negócio?
-          </h2>
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              { icon: MessageSquare, title: "Atendimento consultivo", text: "Foco total em entender as suas reais necessidades e perfil." },
-              { icon: Scale, title: "Segurança jurídica", text: "Análise rigorosa e transparente de toda a documentação envolvida." },
-              { icon: BarChart3, title: "Avaliação de mercado", text: "Precificação justa, realista e condizente com a atualidade." },
-              { icon: Megaphone, title: "Divulgação profissional", text: "Estratégias avançadas de marketing para destacar o seu imóvel." },
-              { icon: Users, title: "Acompanhamento completo", text: "Lado a lado consigo, do primeiro contacto até à entrega das chaves." },
-              { icon: ShieldCheck, title: "Integração com seguros", text: "Opções de proteção total para o seu património num só lugar." },
-            ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-md border border-gray-200 bg-white p-8 shadow-sm transition duration-300 hover:shadow-md hover:-translate-y-1">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1528]/5 text-[#C5A880]">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-6 text-xl font-semibold text-[#0B1528]">{title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-gray-600">{text}</p>
+      <section id="sobre-nos" className="w-full bg-white py-24 px-4 md:px-8">
+        <div className="container mx-auto max-w-7xl">
+          
+          {/* PARTE SUPERIOR: Proposta de Valor e Diferenciais */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+            
+            {/* Coluna da Esquerda: Chamada Principal */}
+            <div className="flex flex-col justify-start">
+              <span className="text-sm font-bold uppercase tracking-[0.25em] text-[#C5A880] mb-4">
+                Por que escolher a Pallaro
+              </span>
+              <h2 className="text-4xl md:text-5xl font-serif font-semibold text-[#0B1528] leading-tight mb-8">
+                Mais do que vender imóveis. <br/>
+                <span className="text-gray-500 font-normal">Ajudamos nossos clientes a tomar decisões seguras.</span>
+              </h2>
+              <div>
+                <Button variant="outline" size="lg" className="border-2 border-[#C5A880] text-[#C5A880] font-semibold hover:bg-[#C5A880] hover:text-[#0B1528] transition-colors duration-300 px-8 py-6 text-lg rounded-sm bg-transparent">
+                  Saiba mais sobre nós
+                </Button>
               </div>
-            ))}
+            </div>
+
+            {/* Coluna da Direita: Grid de Diferenciais */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
+              {[
+                { icon: UserCircle, title: "Atendimento consultivo", text: "Entendemos sua necessidade e oferecemos as melhores opções." },
+                { icon: ShieldCheck, title: "Segurança jurídica", text: "Análise completa da documentação para negociações seguras." },
+                { icon: LineChart, title: "Avaliação de mercado", text: "Precificação justa baseada em dados e experiência." },
+                { icon: Megaphone, title: "Divulgação profissional", text: "Seu imóvel divulgado nos principais canais e plataformas." },
+                { icon: LifeBuoy, title: "Acompanhamento completo", text: "Do início ao fim, cuidamos de todo o processo para você." },
+                { icon: CheckCircle, title: "Integração com seguros", text: "Proteção completa para você e seu patrimônio." }
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <item.icon className="w-8 h-8 text-[#C5A880] shrink-0" strokeWidth={1.5} />
+                  <div>
+                    <h3 className="font-bold text-[#0B1528] mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{item.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* PARTE INFERIOR: Nossos Serviços */}
+          <div className="border-t border-gray-200 pt-16 relative mt-12">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-center">
+              <h2 className="text-3xl font-serif font-semibold text-[#0B1528]">Nossos serviços</h2>
+              <div className="w-12 h-0.5 bg-[#C5A880] mx-auto mt-3"></div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+              {[
+                { icon: Key, title: "Compra", desc: "Encontramos o imóvel ideal para você com as melhores condições." },
+                { icon: TrendingUp, title: "Venda", desc: "Avaliação profissional e divulgação estratégica para vender seu imóvel." },
+                { icon: Home, title: "Locação", desc: "Segurança e praticidade para proprietário e inquilino." },
+                { icon: Building, title: "Investimentos", desc: "Imóveis selecionados para gerar renda e valorização do seu patrimônio." }
+              ].map((srv, idx) => (
+                <div key={idx} className="border border-gray-100 shadow-sm p-8 flex flex-col items-start hover:shadow-md transition-all duration-300 hover:-translate-y-1 rounded-md bg-white">
+                  <srv.icon className="w-10 h-10 text-[#C5A880] mb-6" strokeWidth={1.5} />
+                  <h3 className="text-xl font-serif font-bold text-[#0B1528] mb-3">{srv.title}</h3>
+                  <p className="text-sm text-gray-600 mb-8 flex-grow leading-relaxed">{srv.desc}</p>
+                  <Link to="/contato" className="text-[#C5A880] font-semibold text-sm flex items-center hover:underline group">
+                    Saiba mais <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* =========================================
-          6. NOSSOS SERVIÇOS
-          ========================================= */}
-      <section className="container mx-auto px-4 py-24">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#C5A880]">Soluções Completas</p>
-            <h2 className="mt-2 text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif">
-              Tudo o que precisa num só lugar.
-            </h2>
-            <p className="mt-6 text-gray-600 leading-relaxed text-lg">
-              Simplificamos a gestão do seu património imobiliário. A nossa equipa de especialistas está preparada para orientá-lo em todas as etapas da sua jornada.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-6">
-            {[
-              { icon: Key, title: "Compra", desc: "Encontre o imóvel ideal" },
-              { icon: BadgeDollarSign, title: "Venda", desc: "Negociações ágeis" },
-              { icon: CalendarCheck, title: "Locação", desc: "Gestão sem dores de cabeça" },
-              { icon: TrendingUp, title: "Investimentos", desc: "Alta rentabilidade" },
-            ].map((srv) => (
-              <div key={srv.title} className="border border-gray-100 bg-white p-6 rounded-md shadow-sm">
-                <srv.icon className="h-8 w-8 text-[#0B1528] mb-4" />
-                <h4 className="font-semibold text-lg text-[#0B1528]">{srv.title}</h4>
-                <p className="text-sm text-gray-500 mt-1">{srv.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================
-          7. BANNER MISTO (Imóveis + Seguros)
+          5. BANNER MISTO (Imóveis + Seguros)
           ========================================= */}
       <section className="bg-[#0B1528] text-white py-24 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A880] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
@@ -344,7 +346,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          8. COMO FUNCIONA (Passo a passo)
+          6. COMO FUNCIONA (Passo a passo)
           ========================================= */}
       <section className="container mx-auto px-4 py-24">
         <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
@@ -382,7 +384,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          9. DEPOIMENTOS
+          7. DEPOIMENTOS
           ========================================= */}
       <section className="bg-[#F8F9FA] py-24">
         <div className="container mx-auto px-4">
@@ -431,7 +433,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          10. CTA FINAL DE AVALIAÇÃO
+          8. CTA FINAL DE AVALIAÇÃO
           ========================================= */}
       <section className="container mx-auto px-4 py-16 mb-8">
         <div className="relative isolate overflow-hidden rounded-2xl bg-[#0B1528] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
