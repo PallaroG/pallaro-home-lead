@@ -9,11 +9,8 @@ import logoImg from "@/logo.png";
 
 const nav = [
   { id: "inicio", to: "/", label: "Início" },
-  { id: "comprar", to: "/imoveis", label: "Comprar" },
-  { id: "alugar", to: "/imoveis", label: "Alugar" },
-  { id: "comercial", to: "/imoveis", label: "Comercial" },
+  { id: "ver-imoveis", to: "/imoveis", label: "Ver Imóveis" },
   { id: "sobre-nos", to: "/", label: "Sobre Nós" },
-  { id: "blog", to: "/", label: "Blog" },
   { id: "contato", to: "/contato", label: "Contato" },
 ] as any;
 
@@ -24,15 +21,19 @@ export function Header() {
   
   const location = useLocation();
 
+  // Verifica se o usuário está na página inicial
+  const isHomePage = location.pathname === "/";
+  // Em páginas internas, o header sempre fica com fundo sólido e compacto
+  const solidHeader = !isHomePage || isScrolled;
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      if (location.pathname === "/") {
+      if (isHomePage) {
         const sections = [
           { id: "inicio", label: "Início" },
-          { id: "sobre-nos", label: "Sobre Nós" },
-          { id: "blog", label: "Blog" }
+          { id: "sobre-nos", label: "Sobre Nós" }
         ];
 
         let currentActive = "Início";
@@ -51,20 +52,20 @@ export function Header() {
 
     if (location.pathname === "/contato") {
       setActiveItem("Contato");
-    } else if (location.pathname === "/imoveis") {
-      if (["Comprar", "Alugar", "Comercial"].indexOf(activeItem) === -1) {
-        setActiveItem(""); 
-      }
+    } else if (location.pathname.startsWith("/imoveis")) {
+      setActiveItem("Ver Imóveis");
+    } else if (location.pathname === "/anunciar-imovel") {
+      setActiveItem("");
     } else {
       handleScroll(); 
     }
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [location.pathname, activeItem]);
+  }, [location.pathname, isHomePage]);
 
   const handleNavClick = (e: React.MouseEvent, item: any) => {
-    if (location.pathname === "/" && item.to === "/") {
+    if (isHomePage && item.to === "/") {
       const element = document.getElementById(item.id);
       if (element) {
         e.preventDefault(); 
@@ -86,7 +87,7 @@ export function Header() {
   return (
     <header 
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled 
+        solidHeader 
           ? "bg-[#0B1528] shadow-lg py-2"
           : "bg-gradient-to-b from-[#0B1528]/90 to-transparent py-6"
       }`}
@@ -99,7 +100,7 @@ export function Header() {
             src={logoImg} 
             alt="Pallaro Seguros e Imóveis" 
             className={`transition-all duration-300 object-contain ${
-              isScrolled ? "h-15" : "h-28"
+              solidHeader ? "h-15" : "h-28"
             }`} 
           />
         </Link>
