@@ -89,6 +89,41 @@ const DEFAULTS: Partial<ListingFormValues> = {
   contractType: "exclusividade",
 };
 
+// =========================================
+// COMPONENTE DE ANIMAÇÃO (FADE IN ON SCROLL)
+// =========================================
+function FadeInSection({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) {
+  const [isVisible, setVisible] = useState(false);
+  const domRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    if (domRef.current) observer.observe(domRef.current);
+    
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={domRef}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      }`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function ListingFormPage() {
   const [step, setStep] = useState<number>(1);
   const [maxReached, setMaxReached] = useState<number>(1);
@@ -177,64 +212,70 @@ function ListingFormPage() {
       `}</style>
 
       <div className="container mx-auto max-w-5xl px-4 pb-10 md:pb-16">
-        <header className="mb-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-            Anunciar imóvel
+        <FadeInSection>
+          <header className="mb-8 text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+              Anunciar imóvel
+            </p>
+            <h1 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">
+              Vamos cadastrar seu imóvel com a Pallaro
+            </h1>
+            <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
+              Um processo guiado em 6 etapas, com a curadoria e o cuidado que só uma imobiliária
+              tradicional da Serra Gaúcha pode oferecer.
+            </p>
+            <ul className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+              <li className="inline-flex items-center gap-1.5">
+                <ShieldCheck className="h-4 w-4 text-primary" /> Análise profissional
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <Sparkles className="h-4 w-4 text-primary" /> Divulgação qualificada
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-primary" /> Acompanhamento dedicado
+              </li>
+            </ul>
+          </header>
+        </FadeInSection>
+
+        <FadeInSection delay={150}>
+          <FormProvider {...methods}>
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              ref={cardRef}
+              className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-10"
+            >
+              <StepIndicator current={step} maxReached={maxReached} onJump={goTo} />
+
+              <div className="mt-8">
+                {step === 1 && <Step1MainData />}
+                {step === 2 && <Step2Features />}
+                {step === 3 && <Step3Details />}
+                {step === 4 && <Step4OwnersKeys />}
+                {step === 5 && <Step5Transaction />}
+                {step === 6 && <Step6Review onJump={goTo} />}
+              </div>
+
+              <div className="mt-10">
+                <StepNav
+                  current={step}
+                  total={STEPS.length}
+                  onBack={() => goTo(step - 1)}
+                  onNext={handleNext}
+                  onSubmit={handleSubmit}
+                  submitting={submitting}
+                />
+              </div>
+            </form>
+          </FormProvider>
+        </FadeInSection>
+
+        <FadeInSection delay={300}>
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Seus dados são salvos automaticamente neste dispositivo enquanto você preenche o
+            formulário.
           </p>
-          <h1 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">
-            Vamos cadastrar seu imóvel com a Pallaro
-          </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
-            Um processo guiado em 6 etapas, com a curadoria e o cuidado que só uma imobiliária
-            tradicional da Serra Gaúcha pode oferecer.
-          </p>
-          <ul className="mx-auto mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-            <li className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-primary" /> Análise profissional
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-primary" /> Divulgação qualificada
-            </li>
-            <li className="inline-flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-primary" /> Acompanhamento dedicado
-            </li>
-          </ul>
-        </header>
-
-        <FormProvider {...methods}>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            ref={cardRef}
-            className="rounded-2xl border border-border bg-card p-5 shadow-sm md:p-10"
-          >
-            <StepIndicator current={step} maxReached={maxReached} onJump={goTo} />
-
-            <div className="mt-8">
-              {step === 1 && <Step1MainData />}
-              {step === 2 && <Step2Features />}
-              {step === 3 && <Step3Details />}
-              {step === 4 && <Step4OwnersKeys />}
-              {step === 5 && <Step5Transaction />}
-              {step === 6 && <Step6Review onJump={goTo} />}
-            </div>
-
-            <div className="mt-10">
-              <StepNav
-                current={step}
-                total={STEPS.length}
-                onBack={() => goTo(step - 1)}
-                onNext={handleNext}
-                onSubmit={handleSubmit}
-                submitting={submitting}
-              />
-            </div>
-          </form>
-        </FormProvider>
-
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Seus dados são salvos automaticamente neste dispositivo enquanto você preenche o
-          formulário.
-        </p>
+        </FadeInSection>
       </div>
     </div>
   );
@@ -256,25 +297,30 @@ function SuccessScreen({ id }: { id: string }) {
       `}</style>
 
       <div className="container mx-auto max-w-2xl px-4 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <CheckCircle2 className="h-8 w-8" />
-        </div>
-        <h1 className="mt-6 text-3xl font-bold text-foreground">Imóvel enviado para análise</h1>
-        <p className="mt-3 text-muted-foreground">
-          Seu imóvel foi enviado para análise. A equipe Pallaro entrará em contato para validar as
-          informações e dar continuidade ao processo.
-        </p>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Protocolo interno: <span className="font-mono">{id.slice(0, 8)}</span>
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button asChild>
-            <Link to="/">Voltar ao início</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/imoveis">Ver imóveis disponíveis</Link>
-          </Button>
-        </div>
+        <FadeInSection>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <CheckCircle2 className="h-8 w-8" />
+          </div>
+          <h1 className="mt-6 text-3xl font-bold text-foreground">Imóvel enviado para análise</h1>
+          <p className="mt-3 text-muted-foreground">
+            Seu imóvel foi enviado para análise. A equipe Pallaro entrará em contato para validar as
+            informações e dar continuidade ao processo.
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Protocolo interno: <span className="font-mono">{id.slice(0, 8)}</span>
+          </p>
+        </FadeInSection>
+        
+        <FadeInSection delay={200}>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Button asChild>
+              <Link to="/">Voltar ao início</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/imoveis">Ver imóveis disponíveis</Link>
+            </Button>
+          </div>
+        </FadeInSection>
       </div>
     </div>
   );
