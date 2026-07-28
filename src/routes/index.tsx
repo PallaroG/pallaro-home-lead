@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { 
   Search, 
   Home, 
@@ -47,7 +47,42 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-// Array com 10 depoimentos com linguagem humanizada e próxima
+// =========================================
+// COMPONENTE DE ANIMAÇÃO (FADE IN ON SCROLL)
+// =========================================
+function FadeInSection({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) {
+  const [isVisible, setVisible] = useState(false);
+  const domRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          // Uma vez visível, paramos de observar para a animação não repetir ao subir a tela
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 }); // Dispara quando 10% do elemento estiver visível
+
+    if (domRef.current) observer.observe(domRef.current);
+    
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={domRef}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+      }`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
 const testimonials = [
   {
     name: "Mariana Costa",
@@ -98,7 +133,6 @@ function HomePage() {
   const [type, setType] = useState<string>("");
   const [city, setCity] = useState<string>("");
 
-  // Referência para o carrossel de depoimentos
   const carouselRef = useRef<HTMLDivElement>(null);
 
   function handleSearch(e: React.FormEvent) {
@@ -112,7 +146,6 @@ function HomePage() {
     });
   }
 
-  // Função para rolar o carrossel
   const scrollTestimonials = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
       const scrollAmount = carouselRef.current.clientWidth;
@@ -138,27 +171,29 @@ function HomePage() {
         />
         
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl text-white">
-            <h1 className="font-serif text-5xl font-semibold leading-tight md:text-7xl">
-              Seu próximo <br/>
-              <span className="text-[#C5A880]">imóvel</span> começa aqui.
-            </h1>
-            <h2 className="mt-6 text-xl font-medium md:text-2xl text-white/90">
-              Comprar, vender ou investir com segurança e atendimento personalizado.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg max-w-2xl">
-              A Pallaro Imóveis une experiência, transparência e consultoria para ajudar você a encontrar o imóvel ideal ou vender seu patrimônio com tranquilidade.
-            </p>
-            
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
-                Encontrar imóveis
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg bg-transparent transition-all rounded-sm">
-                <Link to="/anunciar-imovel">Avaliar meu imóvel</Link>
-              </Button>
+          <FadeInSection delay={100}>
+            <div className="max-w-3xl text-white">
+              <h1 className="font-serif text-5xl font-semibold leading-tight md:text-7xl">
+                Seu próximo <br/>
+                <span className="text-[#C5A880]">imóvel</span> começa aqui.
+              </h1>
+              <h2 className="mt-6 text-xl font-medium md:text-2xl text-white/90">
+                Comprar, vender ou investir com segurança e atendimento personalizado.
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg max-w-2xl">
+                A Pallaro Imóveis une experiência, transparência e consultoria para ajudar você a encontrar o imóvel ideal ou vender seu patrimônio com tranquilidade.
+              </p>
+              
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
+                  Encontrar imóveis
+                </Button>
+                <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg bg-transparent transition-all rounded-sm">
+                  <Link to="/anunciar-imovel">Avaliar meu imóvel</Link>
+                </Button>
+              </div>
             </div>
-          </div>
+          </FadeInSection>
         </div>
       </section>
 
@@ -166,86 +201,88 @@ function HomePage() {
           2. CAIXA DE BUSCA FLUTUANTE
           ========================================= */}
       <section className="container mx-auto px-4 -mt-28 relative z-10 mb-20">
-        <div className="bg-[#0B1528] rounded-md shadow-2xl border border-white/10 overflow-hidden">
-          <div className="flex border-b border-white/10 bg-[#0B1528]/50">
-            <button 
-              onClick={() => setActiveTab("comprar")}
-              className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "comprar" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
-            >
-              <Home className="h-4 w-4" /> Comprar
-            </button>
-            <button 
-              onClick={() => setActiveTab("alugar")}
-              className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "alugar" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
-            >
-              <Home className="h-4 w-4" /> Alugar
-            </button>
-            <button 
-              onClick={() => setActiveTab("comercial")}
-              className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "comercial" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
-            >
-              <Building className="h-4 w-4" /> Comercial
-            </button>
-          </div>
+        <FadeInSection delay={300}>
+          <div className="bg-[#0B1528] rounded-md shadow-2xl border border-white/10 overflow-hidden">
+            <div className="flex border-b border-white/10 bg-[#0B1528]/50">
+              <button 
+                onClick={() => setActiveTab("comprar")}
+                className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "comprar" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
+              >
+                <Home className="h-4 w-4" /> Comprar
+              </button>
+              <button 
+                onClick={() => setActiveTab("alugar")}
+                className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "alugar" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
+              >
+                <Home className="h-4 w-4" /> Alugar
+              </button>
+              <button 
+                onClick={() => setActiveTab("comercial")}
+                className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "comercial" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
+              >
+                <Building className="h-4 w-4" /> Comercial
+              </button>
+            </div>
 
-          <form onSubmit={handleSearch} className="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-4 items-end">
-            <div className="col-span-1 md:col-span-3 lg:col-span-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                <Input placeholder="O que você procura?" className="pl-10 bg-white border-0 text-black h-12 rounded-sm focus-visible:ring-[#C5A880]" />
+            <form onSubmit={handleSearch} className="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-4 items-end">
+              <div className="col-span-1 md:col-span-3 lg:col-span-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                  <Input placeholder="O que você procura?" className="pl-10 bg-white border-0 text-black h-12 rounded-sm focus-visible:ring-[#C5A880]" />
+                </div>
               </div>
-            </div>
-            <div className="col-span-1 lg:col-span-2">
-              <Select value={city} onValueChange={setCity}>
-                <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                  <SelectValue placeholder="Cidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-1 lg:col-span-2">
-              <Select>
-                <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                  <SelectValue placeholder="Bairro" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="centro">Centro</SelectItem>
-                  <SelectItem value="jardins">Jardins</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-1 lg:col-span-2">
-              <Select value={type} onValueChange={setType}>
-                <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                  <SelectValue placeholder="Tipo de imóvel" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="casa">Casa</SelectItem>
-                  <SelectItem value="apartamento">Apartamento</SelectItem>
-                  <SelectItem value="terreno">Terreno</SelectItem>
-                  <SelectItem value="comercial">Comercial</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-1 lg:col-span-2">
-              <Select>
-                <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                  <SelectValue placeholder="Faixa de valor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ate-500k">Até R$ 500.000</SelectItem>
-                  <SelectItem value="500k-1m">R$ 500.000 a R$ 1.000.000</SelectItem>
-                  <SelectItem value="acima-1m">Acima de R$ 1.000.000</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] h-12 w-full col-span-1 md:col-span-3 lg:col-span-1 transition-colors rounded-sm">
-              Buscar
-            </Button>
-          </form>
-        </div>
+              <div className="col-span-1 lg:col-span-2">
+                <Select value={city} onValueChange={setCity}>
+                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
+                    <SelectValue placeholder="Cidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="col-span-1 lg:col-span-2">
+                <Select>
+                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
+                    <SelectValue placeholder="Bairro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="centro">Centro</SelectItem>
+                    <SelectItem value="jardins">Jardins</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="col-span-1 lg:col-span-2">
+                <Select value={type} onValueChange={setType}>
+                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
+                    <SelectValue placeholder="Tipo de imóvel" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="casa">Casa</SelectItem>
+                    <SelectItem value="apartamento">Apartamento</SelectItem>
+                    <SelectItem value="terreno">Terreno</SelectItem>
+                    <SelectItem value="comercial">Comercial</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="col-span-1 lg:col-span-2">
+                <Select>
+                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
+                    <SelectValue placeholder="Faixa de valor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ate-500k">Até R$ 500.000</SelectItem>
+                    <SelectItem value="500k-1m">R$ 500.000 a R$ 1.000.000</SelectItem>
+                    <SelectItem value="acima-1m">Acima de R$ 1.000.000</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button type="submit" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] h-12 w-full col-span-1 md:col-span-3 lg:col-span-1 transition-colors rounded-sm">
+                Buscar
+              </Button>
+            </form>
+          </div>
+        </FadeInSection>
       </section>
 
       {/* =========================================
@@ -278,32 +315,33 @@ function HomePage() {
               route: "terreno",
               image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80" 
             },
-          ].map((cat) => (
-            <Link 
-              key={cat.name} 
-              to="/imoveis" 
-              search={{ type: cat.route as any }}
-              className="group relative flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#C5A880]/50 hover:-translate-y-1"
-            >
-              <div className="h-48 w-full overflow-hidden">
-                <img 
-                  src={cat.image} 
-                  alt={cat.name} 
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
+          ].map((cat, index) => (
+            <FadeInSection key={cat.name} delay={index * 150}>
+              <Link 
+                to="/imoveis" 
+                search={{ type: cat.route as any }}
+                className="group relative flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#C5A880]/50 hover:-translate-y-1"
+              >
+                <div className="h-48 w-full overflow-hidden">
+                  <img 
+                    src={cat.image} 
+                    alt={cat.name} 
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                </div>
 
-              <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
-                <cat.icon className="h-6 w-6" />
-              </div>
-              
-              <div className="flex flex-col items-center pt-8 pb-6 px-4">
-                <h3 className="font-serif text-xl font-semibold text-[#0B1528]">{cat.name}</h3>
-                <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#C5A880]">
-                  Ver imóveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-              </div>
-            </Link>
+                <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
+                  <cat.icon className="h-6 w-6" />
+                </div>
+                
+                <div className="flex flex-col items-center pt-8 pb-6 px-4">
+                  <h3 className="font-serif text-xl font-semibold text-[#0B1528]">{cat.name}</h3>
+                  <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#C5A880]">
+                    Ver imóveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </div>
+              </Link>
+            </FadeInSection>
           ))}
         </div>
       </section>
@@ -315,20 +353,22 @@ function HomePage() {
         <div className="container mx-auto max-w-7xl">
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-            <div className="flex flex-col justify-start">
-              <span className="text-sm font-bold uppercase tracking-[0.25em] text-[#C5A880] mb-4">
-                Por que escolher a Pallaro
-              </span>
-              <h2 className="text-4xl md:text-5xl font-serif font-semibold text-[#0B1528] leading-tight mb-8">
-                Mais do que vender imóveis. <br/>
-                <span className="text-gray-500 font-normal">Ajudamos nossos clientes a tomar decisões seguras.</span>
-              </h2>
-              <div>
-                <Button variant="outline" size="lg" className="border-2 border-[#C5A880] text-[#C5A880] font-semibold hover:bg-[#C5A880] hover:text-[#0B1528] transition-colors duration-300 px-8 py-6 text-lg rounded-sm bg-transparent">
-                  Saiba mais sobre nós
-                </Button>
+            <FadeInSection>
+              <div className="flex flex-col justify-start">
+                <span className="text-sm font-bold uppercase tracking-[0.25em] text-[#C5A880] mb-4">
+                  Por que escolher a Pallaro
+                </span>
+                <h2 className="text-4xl md:text-5xl font-serif font-semibold text-[#0B1528] leading-tight mb-8">
+                  Mais do que vender imóveis. <br/>
+                  <span className="text-gray-500 font-normal">Ajudamos nossos clientes a tomar decisões seguras.</span>
+                </h2>
+                <div>
+                  <Button variant="outline" size="lg" className="border-2 border-[#C5A880] text-[#C5A880] font-semibold hover:bg-[#C5A880] hover:text-[#0B1528] transition-colors duration-300 px-8 py-6 text-lg rounded-sm bg-transparent">
+                    Saiba mais sobre nós
+                  </Button>
+                </div>
               </div>
-            </div>
+            </FadeInSection>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10">
               {[
@@ -339,22 +379,26 @@ function HomePage() {
                 { icon: LifeBuoy, title: "Acompanhamento completo", text: "Do início ao fim, cuidamos de todo o processo para você." },
                 { icon: CheckCircle, title: "Integração com seguros", text: "Proteção completa para você e seu patrimônio." }
               ].map((item, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <item.icon className="w-8 h-8 text-[#C5A880] shrink-0" strokeWidth={1.5} />
-                  <div>
-                    <h3 className="font-bold text-[#0B1528] mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{item.text}</p>
+                <FadeInSection key={idx} delay={200 + (idx * 50)}>
+                  <div className="flex gap-4">
+                    <item.icon className="w-8 h-8 text-[#C5A880] shrink-0" strokeWidth={1.5} />
+                    <div>
+                      <h3 className="font-bold text-[#0B1528] mb-2">{item.title}</h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">{item.text}</p>
+                    </div>
                   </div>
-                </div>
+                </FadeInSection>
               ))}
             </div>
           </div>
 
           <div className="border-t border-gray-200 pt-16 relative mt-12">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-center">
-              <h2 className="text-3xl font-serif font-semibold text-[#0B1528]">Nossos serviços</h2>
-              <div className="w-12 h-0.5 bg-[#C5A880] mx-auto mt-3"></div>
-            </div>
+            <FadeInSection>
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-center">
+                <h2 className="text-3xl font-serif font-semibold text-[#0B1528]">Nossos serviços</h2>
+                <div className="w-12 h-0.5 bg-[#C5A880] mx-auto mt-3"></div>
+              </div>
+            </FadeInSection>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
               {[
@@ -363,14 +407,16 @@ function HomePage() {
                 { icon: Home, title: "Locação", desc: "Segurança e praticidade para proprietário e inquilino." },
                 { icon: Building, title: "Investimentos", desc: "Imóveis selecionados para gerar renda e valorização do seu patrimônio." }
               ].map((srv, idx) => (
-                <div key={idx} className="border border-gray-100 shadow-sm p-8 flex flex-col items-start hover:shadow-md transition-all duration-300 hover:-translate-y-1 rounded-md bg-white">
-                  <srv.icon className="w-10 h-10 text-[#C5A880] mb-6" strokeWidth={1.5} />
-                  <h3 className="text-xl font-serif font-bold text-[#0B1528] mb-3">{srv.title}</h3>
-                  <p className="text-sm text-gray-600 mb-8 flex-grow leading-relaxed">{srv.desc}</p>
-                  <Link to="/contato" className="text-[#C5A880] font-semibold text-sm flex items-center hover:underline group">
-                    Saiba mais <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
+                <FadeInSection key={idx} delay={idx * 150}>
+                  <div className="border border-gray-100 shadow-sm p-8 flex flex-col items-start hover:shadow-md transition-all duration-300 hover:-translate-y-1 rounded-md bg-white h-full">
+                    <srv.icon className="w-10 h-10 text-[#C5A880] mb-6" strokeWidth={1.5} />
+                    <h3 className="text-xl font-serif font-bold text-[#0B1528] mb-3">{srv.title}</h3>
+                    <p className="text-sm text-gray-600 mb-8 flex-grow leading-relaxed">{srv.desc}</p>
+                    <Link to="/contato" className="text-[#C5A880] font-semibold text-sm flex items-center hover:underline group mt-auto">
+                      Saiba mais <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </FadeInSection>
               ))}
             </div>
           </div>
@@ -385,18 +431,20 @@ function HomePage() {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A880] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <p className="text-[#C5A880] font-semibold tracking-[0.25em] uppercase text-sm mb-4">
-            Uma empresa. Duas especialidades.
-          </p>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8">
-            Imóveis <span className="text-gray-400 font-light">+</span> Seguros
-          </h2>
-          <p className="max-w-2xl mx-auto text-white/80 text-lg mb-10 leading-relaxed">
-            Proteja o seu novo património no momento da aquisição. Oferecemos soluções completas em seguros residenciais, comerciais, de vida e consórcios.
-          </p>
-          <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
-            Conheça a Pallaro Seguros
-          </Button>
+          <FadeInSection>
+            <p className="text-[#C5A880] font-semibold tracking-[0.25em] uppercase text-sm mb-4">
+              Uma empresa. Duas especialidades.
+            </p>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8">
+              Imóveis <span className="text-gray-400 font-light">+</span> Seguros
+            </h2>
+            <p className="max-w-2xl mx-auto text-white/80 text-lg mb-10 leading-relaxed">
+              Proteja o seu novo património no momento da aquisição. Oferecemos soluções completas em seguros residenciais, comerciais, de vida e consórcios.
+            </p>
+            <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
+              Conheça a Pallaro Seguros
+            </Button>
+          </FadeInSection>
         </div>
       </section>
 
@@ -404,9 +452,11 @@ function HomePage() {
           6. COMO FUNCIONA (Passo a passo)
           ========================================= */}
       <section className="container mx-auto px-4 py-24">
-        <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
-          Como funciona
-        </h2>
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
+            Como funciona
+          </h2>
+        </FadeInSection>
         
         <div className="relative">
           <div className="hidden lg:block absolute top-10 left-[8%] right-[8%] h-[2px] bg-gray-200 -z-10"></div>
@@ -420,17 +470,19 @@ function HomePage() {
               { step: "05", icon: FileText, title: "Documentação" },
               { step: "06", icon: Key, title: "Entrega das chaves" },
             ].map((item, index) => (
-              <div key={item.step} className="flex flex-col items-center text-center relative group">
-                <div className="h-20 w-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center relative mb-6 transition-all duration-300 group-hover:border-[#C5A880] shadow-sm">
-                  <item.icon className="h-8 w-8 text-[#0B1528]" />
-                  <span className="absolute -bottom-2 bg-[#C5A880] text-[#0B1528] text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
-                    {item.step}
-                  </span>
+              <FadeInSection key={item.step} delay={index * 150}>
+                <div className="flex flex-col items-center text-center relative group">
+                  <div className="h-20 w-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center relative mb-6 transition-all duration-300 group-hover:border-[#C5A880] shadow-sm">
+                    <item.icon className="h-8 w-8 text-[#0B1528]" />
+                    <span className="absolute -bottom-2 bg-[#C5A880] text-[#0B1528] text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
+                      {item.step}
+                    </span>
+                  </div>
+                  <h3 className="font-semibold text-[#0B1528] max-w-[140px] leading-tight">
+                    {item.title}
+                  </h3>
                 </div>
-                <h3 className="font-semibold text-[#0B1528] max-w-[140px] leading-tight">
-                  {item.title}
-                </h3>
-              </div>
+              </FadeInSection>
             ))}
           </div>
         </div>
@@ -441,54 +493,56 @@ function HomePage() {
           ========================================= */}
       <section className="bg-[#F8F9FA] py-24">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-            <h2 className="text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif text-center md:text-left">
-              O que nossos clientes dizem
-            </h2>
-            {/* Controles do Carrossel (Flechas) */}
-            <div className="flex gap-3">
-              <button 
-                onClick={() => scrollTestimonials('left')} 
-                className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#C5A880] hover:text-white hover:border-[#C5A880] transition-all"
-                aria-label="Ver anterior"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-              <button 
-                onClick={() => scrollTestimonials('right')} 
-                className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#C5A880] hover:text-white hover:border-[#C5A880] transition-all"
-                aria-label="Ver próximo"
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-          
-          {/* Trilha do Carrossel */}
-          <div 
-            ref={carouselRef}
-            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {testimonials.map((review, i) => (
-              <div 
-                key={i} 
-                className="min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] snap-center shrink-0 bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex gap-1 mb-6">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="h-5 w-5 fill-[#C5A880] text-[#C5A880]" />
-                    ))}
-                  </div>
-                  <p className="text-gray-600 leading-relaxed italic mb-8">
-                    {review.text}
-                  </p>
-                </div>
-                <h4 className="font-bold text-[#0B1528] font-serif">{review.name}</h4>
+          <FadeInSection>
+            <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+              <h2 className="text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif text-center md:text-left">
+                O que nossos clientes dizem
+              </h2>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => scrollTestimonials('left')} 
+                  className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#C5A880] hover:text-white hover:border-[#C5A880] transition-all"
+                  aria-label="Ver anterior"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button 
+                  onClick={() => scrollTestimonials('right')} 
+                  className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#C5A880] hover:text-white hover:border-[#C5A880] transition-all"
+                  aria-label="Ver próximo"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          </FadeInSection>
+          
+          <FadeInSection delay={200}>
+            <div 
+              ref={carouselRef}
+              className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 [&::-webkit-scrollbar]:hidden"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {testimonials.map((review, i) => (
+                <div 
+                  key={i} 
+                  className="min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] snap-center shrink-0 bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex gap-1 mb-6">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className="h-5 w-5 fill-[#C5A880] text-[#C5A880]" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 leading-relaxed italic mb-8">
+                      {review.text}
+                    </p>
+                  </div>
+                  <h4 className="font-bold text-[#0B1528] font-serif">{review.name}</h4>
+                </div>
+              ))}
+            </div>
+          </FadeInSection>
           
         </div>
       </section>
@@ -497,28 +551,30 @@ function HomePage() {
           8. CTA FINAL DE AVALIAÇÃO
           ========================================= */}
       <section className="container mx-auto px-4 py-16 mb-8">
-        <div className="relative isolate overflow-hidden rounded-2xl bg-[#0B1528] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
-          <div
-            className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920')" }}
-          />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0B1528] via-[#0B1528]/90 to-transparent"></div>
+        <FadeInSection>
+          <div className="relative isolate overflow-hidden rounded-2xl bg-[#0B1528] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+            <div
+              className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920')" }}
+            />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0B1528] via-[#0B1528]/90 to-transparent"></div>
 
-          <div className="relative z-10 text-center md:text-left max-w-xl">
-            <h2 className="text-3xl font-serif font-bold text-white md:text-4xl">
-              Quer vender seu imóvel?
-            </h2>
-            <p className="mt-4 text-white/80 text-lg">
-              Receba uma avaliação profissional e gratuita com base nos dados reais do mercado atual.
-            </p>
+            <div className="relative z-10 text-center md:text-left max-w-xl">
+              <h2 className="text-3xl font-serif font-bold text-white md:text-4xl">
+                Quer vender seu imóvel?
+              </h2>
+              <p className="mt-4 text-white/80 text-lg">
+                Receba uma avaliação profissional e gratuita com base nos dados reais do mercado atual.
+              </p>
+            </div>
+            
+            <div className="relative z-10 shrink-0">
+              <Button asChild size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-10 py-7 text-lg transition-all rounded-sm shadow-xl hover:-translate-y-1">
+                <Link to="/anunciar-imovel">Solicitar avaliação</Link>
+              </Button>
+            </div>
           </div>
-          
-          <div className="relative z-10 shrink-0">
-            <Button asChild size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-10 py-7 text-lg transition-all rounded-sm shadow-xl hover:-translate-y-1">
-              <Link to="/anunciar-imovel">Solicitar avaliação</Link>
-            </Button>
-          </div>
-        </div>
+        </FadeInSection>
       </section>
     </>
   );
