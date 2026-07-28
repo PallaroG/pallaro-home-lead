@@ -130,6 +130,9 @@ function ListingFormPage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const cardRef = useRef<HTMLFormElement>(null);
+  
+  // Referência para identificar o primeiro carregamento da página
+  const isFirstRender = useRef(true);
 
   const methods = useForm<ListingFormValues>({
     resolver: zodResolver(listingSchema),
@@ -157,9 +160,24 @@ function ListingFormPage() {
     return () => sub.unsubscribe();
   }, [methods]);
 
+  // Lida com o scroll e o salvamento das etapas
   useEffect(() => {
     saveStep(step);
-    cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Se for o primeiro carregamento, garante que inicie no topo e previne o scroll automático
+    if (isFirstRender.current) {
+      window.scrollTo(0, 0);
+      isFirstRender.current = false;
+      return;
+    }
+
+    // Se houver navegação entre etapas (Next/Back), rola a página calculando o desconto do Header fixo
+    if (cardRef.current) {
+      const yOffset = -120; // Espaço para o header não cobrir o form
+      const element = cardRef.current;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
   }, [step]);
 
   const goTo = (n: number) => {
