@@ -3,9 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { 
   Search, 
   Home, 
-  Building, 
-  Building2, 
-  Map, 
   ArrowRight,
   UserCircle,
   ShieldCheck,
@@ -22,7 +19,9 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
-  MapPin
+  MapPin,
+  Calculator,
+  Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cities } from "@/data/properties";
+import { cities, properties } from "@/data/properties";
+import { PropertyCard } from "@/components/property/PropertyCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -134,6 +134,9 @@ function HomePage() {
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  // Filtra apenas os imóveis marcados como destaque
+  const featured = properties.filter((p) => p.featured);
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     navigate({
@@ -189,7 +192,7 @@ function HomePage() {
       {/* =========================================
           2. CAIXA DE BUSCA FLUTUANTE
           ========================================= */}
-      <section className="container mx-auto px-4 -mt-32 relative z-10 mb-20 font-sans">
+      <section className="container mx-auto px-4 -mt-32 relative z-10 mb-8 font-sans">
         <FadeInSection delay={300}>
           <div className="bg-[#030616] rounded-xl shadow-2xl p-6 border border-white/5">
             
@@ -299,68 +302,101 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          3. CATEGORIAS DE IMÓVEIS
+          3. ACESSOS RÁPIDOS
+          ========================================= */}
+      <section className="container mx-auto px-4 pt-8 pb-16 font-sans">
+        <FadeInSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 lg:divide-x divide-gray-200">
+            
+            {/* Item 1 */}
+            <Link to="/imoveis" className="flex items-center gap-4 lg:px-4 group">
+              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <Home className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#030616] text-sm leading-tight">Imóveis<br/>para Comprar</h3>
+                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Veja as melhores<br/>oportunidades</p>
+              </div>
+            </Link>
+            
+            {/* Item 2 */}
+            <Link to="/imoveis" className="flex items-center gap-4 lg:px-4 group">
+              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <Key className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#030616] text-sm leading-tight">Imóveis<br/>para Alugar</h3>
+                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Encontre seu novo<br/>lar para locação</p>
+              </div>
+            </Link>
+
+            {/* Item 3 */}
+            <Link to="/anunciar-imovel" className="flex items-center gap-4 lg:px-4 group">
+              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <ClipboardList className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#030616] text-sm leading-tight">Anuncie seu<br/>Imóvel</h3>
+                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Cadastre seu imóvel<br/>gratuitamente</p>
+              </div>
+            </Link>
+
+            {/* Item 4 */}
+            <Link to="/contato" className="flex items-center gap-4 lg:px-4 group">
+              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#030616] text-sm leading-tight">Seguro Fiança</h3>
+                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Alugue com mais<br/>segurança e<br/>tranquilidade</p>
+              </div>
+            </Link>
+
+            {/* Item 5 */}
+            <Link to="/contato" className="flex items-center gap-4 lg:px-4 group">
+              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <Calculator className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#030616] text-sm leading-tight">Simule seu<br/>Financiamento</h3>
+                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Faça uma simulação<br/>de forma rápida</p>
+              </div>
+            </Link>
+
+          </div>
+        </FadeInSection>
+      </section>
+
+      {/* =========================================
+          4. IMÓVEIS EM DESTAQUE
           ========================================= */}
       <section className="container mx-auto px-4 py-16 font-sans">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { 
-              name: "Casas", 
-              icon: Home, 
-              route: "casa",
-              image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80" 
-            },
-            { 
-              name: "Apartamentos", 
-              icon: Building2, 
-              route: "apartamento",
-              image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80" 
-            },
-            { 
-              name: "Comerciais", 
-              icon: Building, 
-              route: "comercial",
-              image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80" 
-            },
-            { 
-              name: "Terrenos", 
-              icon: Map, 
-              route: "terreno",
-              image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80" 
-            },
-          ].map((cat, index) => (
-            <FadeInSection key={cat.name} delay={index * 150}>
-              <Link 
-                to="/imoveis" 
-                search={{ type: cat.route as any }}
-                className="group relative flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[#d99f2d]/50 hover:-translate-y-1"
-              >
-                <div className="h-48 w-full overflow-hidden">
-                  <img 
-                    src={cat.image} 
-                    alt={cat.name} 
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                </div>
+        <FadeInSection>
+          <div className="flex items-end justify-between gap-4 border-b border-gray-200 pb-4 mb-8">
+            <div className="relative">
+              <h2 className="text-xl md:text-2xl font-bold text-[#030616] uppercase tracking-wide">
+                Imóveis em destaque
+              </h2>
+              {/* Underline dourado do título */}
+              <div className="absolute -bottom-[17px] left-0 w-16 h-1 bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a]"></div>
+            </div>
+            <Link to="/imoveis" className="flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-[#d99f2d] uppercase tracking-wider transition-colors">
+              Ver todos <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </FadeInSection>
 
-                <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#030616] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#d99f2d]">
-                  <cat.icon className="h-6 w-6" />
-                </div>
-                
-                <div className="flex flex-col items-center pt-8 pb-6 px-4">
-                  <h3 className="text-xl font-bold text-[#030616]">{cat.name}</h3>
-                  <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#d99f2d]">
-                    Ver imóveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </Link>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((p, index) => (
+            <FadeInSection key={p.id} delay={index * 150}>
+              <PropertyCard property={p} />
             </FadeInSection>
           ))}
         </div>
       </section>
 
       {/* =========================================
-          4. PROPOSTA DE VALOR E SERVIÇOS 
+          5. PROPOSTA DE VALOR E SERVIÇOS 
           ========================================= */}
       <section id="sobre-nos" className="w-full bg-white py-24 px-4 md:px-8 font-sans">
         <div className="container mx-auto max-w-7xl">
@@ -438,7 +474,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          5. BANNER MISTO (Imóveis + Seguros)
+          6. BANNER MISTO (Imóveis + Seguros)
           ========================================= */}
       <section className="bg-[#030616] text-white py-24 relative overflow-hidden font-sans">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#d99f2d] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
@@ -462,7 +498,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          6. COMO FUNCIONA (Passo a passo)
+          7. COMO FUNCIONA (Passo a passo)
           ========================================= */}
       <section className="container mx-auto px-4 py-24 font-sans">
         <FadeInSection>
@@ -502,7 +538,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          7. DEPOIMENTOS (Carrossel Interativo)
+          8. DEPOIMENTOS (Carrossel Interativo)
           ========================================= */}
       <section className="bg-[#F8F9FA] py-24 font-sans">
         <div className="container mx-auto px-4">
@@ -561,7 +597,7 @@ function HomePage() {
       </section>
 
       {/* =========================================
-          8. CTA FINAL DE AVALIAÇÃO
+          9. CTA FINAL DE AVALIAÇÃO
           ========================================= */}
       <section className="container mx-auto px-4 py-16 mb-8 font-sans">
         <FadeInSection>
