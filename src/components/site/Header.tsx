@@ -9,8 +9,9 @@ import logoImg from "@/logo.png";
 
 const nav = [
   { id: "inicio", to: "/", label: "Início" },
-  { id: "ver-imoveis", to: "/imoveis", label: "Ver Imóveis" },
-  { id: "sobre-nos", to: "/", label: "Sobre Nós" },
+  { id: "comprar", to: "/imoveis", search: { purpose: "comprar" }, label: "Comprar" },
+  { id: "alugar", to: "/imoveis", search: { purpose: "alugar" }, label: "Alugar" },
+  { id: "sobre-nos", to: "/", hash: "sobre-nos", label: "Sobre" },
   { id: "contato", to: "/contato", label: "Contato" },
 ] as any;
 
@@ -26,6 +27,7 @@ export function Header() {
   // Em páginas internas, o header sempre fica com fundo sólido e compacto
   const solidHeader = !isHomePage || isScrolled;
 
+  // Lógica para detectar rolagem e marcar o item ativo
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -33,7 +35,7 @@ export function Header() {
       if (isHomePage) {
         const sections = [
           { id: "inicio", label: "Início" },
-          { id: "sobre-nos", label: "Sobre Nós" }
+          { id: "sobre-nos", label: "Sobre" }
         ];
 
         let currentActive = "Início";
@@ -41,6 +43,7 @@ export function Header() {
         for (const section of sections) {
           const element = document.getElementById(section.id);
           if (element) {
+            // Desconto do header fixo
             if (window.scrollY >= element.offsetTop - 120) {
               currentActive = section.label;
             }
@@ -50,10 +53,16 @@ export function Header() {
       }
     };
 
+    // Define os itens ativos quando entra em páginas internas
     if (location.pathname === "/contato") {
       setActiveItem("Contato");
     } else if (location.pathname.startsWith("/imoveis")) {
-      setActiveItem("Ver Imóveis");
+      const searchParams = location.search as any;
+      if (searchParams?.purpose === "alugar") {
+        setActiveItem("Alugar");
+      } else {
+        setActiveItem("Comprar"); // Define 'Comprar' por padrão
+      }
     } else if (location.pathname === "/anunciar-imovel") {
       setActiveItem("");
     } else {
@@ -62,20 +71,38 @@ export function Header() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [location.pathname, isHomePage]);
+  }, [location.pathname, location.search, isHomePage]);
+
+  // Efeito extra: Força o scroll correto ao chegar de outra página clicando no "Sobre"
+  useEffect(() => {
+    if (isHomePage && location.hash === "sobre-nos") {
+      // Um pequeno timeout para garantir que o DOM renderizou antes de rolar
+      setTimeout(() => {
+        const element = document.getElementById("sobre-nos");
+        if (element) {
+          window.scrollTo({
+            top: element.offsetTop - 90,
+            behavior: "smooth"
+          });
+        }
+      }, 100);
+    }
+  }, [isHomePage, location.hash]);
 
   const handleNavClick = (e: React.MouseEvent, item: any) => {
     if (isHomePage && item.to === "/") {
-      const element = document.getElementById(item.id);
-      if (element) {
-        e.preventDefault(); 
-        window.scrollTo({
-          top: element.offsetTop - 90, 
-          behavior: "smooth",
-        });
-      } else if (item.id === "inicio") {
+      if (item.id === "inicio") {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const element = document.getElementById(item.id);
+        if (element) {
+          e.preventDefault(); 
+          window.scrollTo({
+            top: element.offsetTop - 90, 
+            behavior: "smooth",
+          });
+        }
       }
       setActiveItem(item.label);
     } else {
@@ -95,7 +122,6 @@ export function Header() {
       <div className="container mx-auto flex items-center justify-between px-4">
         
         <Link to="/" onClick={(e) => handleNavClick(e, { id: "inicio", to: "/", label: "Início" })} className="flex items-center">
-          {/* USANDO A LOGO IMPORTADA AQUI */}
           <img 
             src={logoImg} 
             alt="Pallaro Seguros e Imóveis" 
@@ -110,6 +136,8 @@ export function Header() {
             <Link
               key={item.label}
               to={item.to}
+              search={item.search}
+              hash={item.hash}
               onClick={(e) => handleNavClick(e, item)}
               className={`px-1 py-2 text-sm font-bold tracking-wide transition-all ${
                 activeItem === item.label
@@ -127,7 +155,7 @@ export function Header() {
             asChild
             className="bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] text-[#030616] font-bold hover:brightness-110 border-0 rounded-sm px-6 py-5 transition-all"
           >
-            <Link to="/anunciar-imovel">Avaliar meu Imóvel</Link>
+            <Link to="/anunciar-imovel">Anunciar meu imóvel</Link>
           </Button>
           
           <a 
@@ -155,7 +183,6 @@ export function Header() {
           </SheetTrigger>
           <SheetContent side="right" className="w-72 bg-[#030616] border-l-white/10 text-white font-sans">
             <SheetTitle className="text-white text-left mt-4">
-               {/* USANDO A LOGO IMPORTADA AQUI TAMBÉM */}
                <img src={logoImg} alt="Pallaro" className="h-8 object-contain" />
             </SheetTitle>
             <nav className="mt-8 flex flex-col gap-2">
@@ -163,6 +190,8 @@ export function Header() {
                 <Link
                   key={item.label}
                   to={item.to}
+                  search={item.search}
+                  hash={item.hash}
                   onClick={(e) => handleNavClick(e, item)}
                   className={`rounded-md px-3 py-3 text-base font-bold transition-colors ${
                     activeItem === item.label ? "text-[#d99f2d] bg-white/5" : "text-white/90 hover:bg-white/10 hover:text-[#d99f2d]"
@@ -176,7 +205,7 @@ export function Header() {
                 className="mt-6 bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] text-[#030616] font-bold hover:brightness-110 border-0 w-full"
               >
                 <Link to="/anunciar-imovel" onClick={() => setOpen(false)}>
-                  Avaliar meu Imóvel
+                  Anunciar meu imóvel
                 </Link>
               </Button>
             </nav>
