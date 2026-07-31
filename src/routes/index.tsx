@@ -21,10 +21,10 @@ import {
   FileText,
   Star,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -59,11 +59,10 @@ function FadeInSection({ children, delay = 0 }: { children: React.ReactNode, del
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           setVisible(true);
-          // Uma vez visível, paramos de observar para a animação não repetir ao subir a tela
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1 }); // Dispara quando 10% do elemento estiver visível
+    }, { threshold: 0.1 });
 
     if (domRef.current) observer.observe(domRef.current);
     
@@ -74,7 +73,7 @@ function FadeInSection({ children, delay = 0 }: { children: React.ReactNode, del
     <div
       ref={domRef}
       className={`transition-all duration-1000 ease-out ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
       }`}
       style={{ transitionDelay: `${delay}ms` }}
     >
@@ -161,37 +160,27 @@ function HomePage() {
       {/* =========================================
           1. HERO SECTION
           ========================================= */}
-      <section id="inicio" className="relative isolate pt-36 pb-48 md:pt-48 md:pb-64 overflow-hidden">
+      <section id="inicio" className="relative isolate pt-36 pb-48 md:pt-48 md:pb-64 overflow-hidden font-sans">
         <div
           className="absolute inset-0 -z-10 bg-cover bg-center"
           style={{
             backgroundImage:
-              "linear-gradient(to right, rgba(11, 21, 40, 0.95) 0%, rgba(11, 21, 40, 0.5) 100%), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920')",
+              "linear-gradient(to right, rgba(3, 6, 22, 0.95) 0%, rgba(3, 6, 22, 0.3) 100%), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920')",
           }}
         />
         
         <div className="container mx-auto px-4">
           <FadeInSection delay={100}>
             <div className="max-w-3xl text-white">
-              <h1 className="font-serif text-5xl font-semibold leading-tight md:text-7xl">
-                Seu próximo <br/>
-                <span className="text-[#C5A880]">imóvel</span> começa aqui.
-              </h1>
-              <h2 className="mt-6 text-xl font-medium md:text-2xl text-white/90">
-                Comprar, vender ou investir com segurança e atendimento personalizado.
-              </h2>
-              <p className="mt-4 text-base leading-relaxed text-white/70 md:text-lg max-w-2xl">
-                A Pallaro Imóveis une experiência, transparência e consultoria para ajudar você a encontrar o imóvel ideal ou vender seu patrimônio com tranquilidade.
+              <p className="text-sm font-bold uppercase tracking-widest text-[#C5A880] mb-4">
+                Pallaro Seguros e Imóveis
               </p>
-              
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
-                  Encontrar imóveis
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg bg-transparent transition-all rounded-sm">
-                  <Link to="/anunciar-imovel">Avaliar meu imóvel</Link>
-                </Button>
-              </div>
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                Encontre o imóvel ideal<br />para morar ou investir
+              </h1>
+              <p className="text-lg md:text-xl text-white/80 max-w-2xl font-light">
+                As melhores opções em venda e locação<br />você encontra aqui.
+              </p>
             </div>
           </FadeInSection>
         </div>
@@ -200,86 +189,110 @@ function HomePage() {
       {/* =========================================
           2. CAIXA DE BUSCA FLUTUANTE
           ========================================= */}
-      <section className="container mx-auto px-4 -mt-28 relative z-10 mb-20">
+      <section className="container mx-auto px-4 -mt-32 relative z-10 mb-20 font-sans">
         <FadeInSection delay={300}>
-          <div className="bg-[#0B1528] rounded-md shadow-2xl border border-white/10 overflow-hidden">
-            <div className="flex border-b border-white/10 bg-[#0B1528]/50">
+          <div className="bg-[#030616] rounded-xl shadow-2xl p-6 border border-white/5">
+            
+            {/* Tabs */}
+            <div className="flex mb-6 gap-2">
               <button 
                 onClick={() => setActiveTab("comprar")}
-                className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "comprar" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
+                className={`px-6 py-2.5 text-sm font-bold flex items-center gap-2 rounded-t-md border-b-2 transition-all ${
+                  activeTab === "comprar" 
+                    ? "text-[#C5A880] border-[#C5A880]" 
+                    : "text-white/60 border-transparent hover:text-white"
+                }`}
               >
-                <Home className="h-4 w-4" /> Comprar
+                <Home className="h-4 w-4" /> COMPRAR
               </button>
               <button 
                 onClick={() => setActiveTab("alugar")}
-                className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "alugar" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
+                className={`px-6 py-2.5 text-sm font-bold flex items-center gap-2 rounded-t-md border-b-2 transition-all ${
+                  activeTab === "alugar" 
+                    ? "text-[#C5A880] border-[#C5A880]" 
+                    : "text-white/60 border-transparent hover:text-white"
+                }`}
               >
-                <Home className="h-4 w-4" /> Alugar
-              </button>
-              <button 
-                onClick={() => setActiveTab("comercial")}
-                className={`px-6 md:px-8 py-4 text-sm font-semibold flex items-center gap-2 transition-colors ${activeTab === "comercial" ? "text-[#C5A880] border-b-2 border-[#C5A880] bg-white/5" : "text-white/60 hover:text-white"}`}
-              >
-                <Building className="h-4 w-4" /> Comercial
+                <Key className="h-4 w-4" /> ALUGAR
               </button>
             </div>
 
-            <form onSubmit={handleSearch} className="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-4 items-end">
-              <div className="col-span-1 md:col-span-3 lg:col-span-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  <Input placeholder="O que você procura?" className="pl-10 bg-white border-0 text-black h-12 rounded-sm focus-visible:ring-[#C5A880]" />
+            {/* Formulário */}
+            <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-4 items-center">
+              
+              {/* Caixa branca com os inputs */}
+              <div className="flex-1 w-full bg-white rounded-md grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                
+                {/* Cidade */}
+                <div className="px-4 py-3 flex flex-col justify-center">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Cidade</label>
+                  <div className="flex items-center">
+                    <Select value={city} onValueChange={setCity}>
+                      <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
+                        <SelectValue placeholder="Selecione a cidade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <MapPin className="h-4 w-4 text-gray-400 shrink-0 ml-2" />
+                  </div>
+                </div>
+
+                {/* Bairro */}
+                <div className="px-4 py-3 flex flex-col justify-center">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Bairro</label>
+                  <div className="flex items-center">
+                    <Select>
+                      <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
+                        <SelectValue placeholder="Selecione o bairro" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="centro">Centro</SelectItem>
+                        <SelectItem value="jardins">Jardins</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <MapPin className="h-4 w-4 text-gray-400 shrink-0 ml-2" />
+                  </div>
+                </div>
+
+                {/* Tipo de Imóvel */}
+                <div className="px-4 py-3 flex flex-col justify-center">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
+                  <Select value={type} onValueChange={setType}>
+                    <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
+                      <SelectValue placeholder="Todos os tipos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="casa">Casa</SelectItem>
+                      <SelectItem value="apartamento">Apartamento</SelectItem>
+                      <SelectItem value="terreno">Terreno</SelectItem>
+                      <SelectItem value="comercial">Comercial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Faixa de Preço */}
+                <div className="px-4 py-3 flex flex-col justify-center">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Faixa de Preço</label>
+                  <Select>
+                    <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
+                      <SelectValue placeholder="Valor mínimo - máximo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ate-500k">Até R$ 500.000</SelectItem>
+                      <SelectItem value="500k-1m">R$ 500.000 a R$ 1.000.000</SelectItem>
+                      <SelectItem value="acima-1m">Acima de R$ 1.000.000</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-              <div className="col-span-1 lg:col-span-2">
-                <Select value={city} onValueChange={setCity}>
-                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                    <SelectValue placeholder="Cidade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-1 lg:col-span-2">
-                <Select>
-                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                    <SelectValue placeholder="Bairro" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="centro">Centro</SelectItem>
-                    <SelectItem value="jardins">Jardins</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-1 lg:col-span-2">
-                <Select value={type} onValueChange={setType}>
-                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                    <SelectValue placeholder="Tipo de imóvel" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="casa">Casa</SelectItem>
-                    <SelectItem value="apartamento">Apartamento</SelectItem>
-                    <SelectItem value="terreno">Terreno</SelectItem>
-                    <SelectItem value="comercial">Comercial</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="col-span-1 lg:col-span-2">
-                <Select>
-                  <SelectTrigger className="bg-white border-0 text-black h-12 rounded-sm focus:ring-[#C5A880]">
-                    <SelectValue placeholder="Faixa de valor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ate-500k">Até R$ 500.000</SelectItem>
-                    <SelectItem value="500k-1m">R$ 500.000 a R$ 1.000.000</SelectItem>
-                    <SelectItem value="acima-1m">Acima de R$ 1.000.000</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button type="submit" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] h-12 w-full col-span-1 md:col-span-3 lg:col-span-1 transition-colors rounded-sm">
-                Buscar
+
+              {/* Botão de Busca */}
+              <Button type="submit" className="bg-[#C5A880] text-white hover:bg-[#b0946d] w-full lg:w-auto px-8 min-h-[64px] rounded-md text-sm font-bold tracking-wide flex items-center justify-center gap-2 shrink-0">
+                <Search className="h-5 w-5" /> BUSCAR IMÓVEL
               </Button>
+
             </form>
           </div>
         </FadeInSection>
@@ -288,7 +301,7 @@ function HomePage() {
       {/* =========================================
           3. CATEGORIAS DE IMÓVEIS
           ========================================= */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-16 font-sans">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { 
@@ -330,12 +343,12 @@ function HomePage() {
                   />
                 </div>
 
-                <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0B1528] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
+                <div className="absolute top-48 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#030616] border-4 border-white text-white transition-colors duration-300 group-hover:bg-[#C5A880]">
                   <cat.icon className="h-6 w-6" />
                 </div>
                 
                 <div className="flex flex-col items-center pt-8 pb-6 px-4">
-                  <h3 className="font-serif text-xl font-semibold text-[#0B1528]">{cat.name}</h3>
+                  <h3 className="text-xl font-bold text-[#030616]">{cat.name}</h3>
                   <span className="mt-2 flex items-center gap-1 text-sm font-medium text-[#C5A880]">
                     Ver imóveis <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
@@ -349,7 +362,7 @@ function HomePage() {
       {/* =========================================
           4. PROPOSTA DE VALOR E SERVIÇOS 
           ========================================= */}
-      <section id="sobre-nos" className="w-full bg-white py-24 px-4 md:px-8">
+      <section id="sobre-nos" className="w-full bg-white py-24 px-4 md:px-8 font-sans">
         <div className="container mx-auto max-w-7xl">
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
@@ -358,12 +371,12 @@ function HomePage() {
                 <span className="text-sm font-bold uppercase tracking-[0.25em] text-[#C5A880] mb-4">
                   Por que escolher a Pallaro
                 </span>
-                <h2 className="text-4xl md:text-5xl font-serif font-semibold text-[#0B1528] leading-tight mb-8">
+                <h2 className="text-4xl md:text-5xl font-bold text-[#030616] leading-tight mb-8">
                   Mais do que vender imóveis. <br/>
                   <span className="text-gray-500 font-normal">Ajudamos nossos clientes a tomar decisões seguras.</span>
                 </h2>
                 <div>
-                  <Button variant="outline" size="lg" className="border-2 border-[#C5A880] text-[#C5A880] font-semibold hover:bg-[#C5A880] hover:text-[#0B1528] transition-colors duration-300 px-8 py-6 text-lg rounded-sm bg-transparent">
+                  <Button variant="outline" size="lg" className="border-2 border-[#C5A880] text-[#C5A880] font-bold hover:bg-[#C5A880] hover:text-[#030616] transition-colors duration-300 px-8 py-6 text-lg rounded-sm bg-transparent">
                     Saiba mais sobre nós
                   </Button>
                 </div>
@@ -383,7 +396,7 @@ function HomePage() {
                   <div className="flex gap-4">
                     <item.icon className="w-8 h-8 text-[#C5A880] shrink-0" strokeWidth={1.5} />
                     <div>
-                      <h3 className="font-bold text-[#0B1528] mb-2">{item.title}</h3>
+                      <h3 className="font-bold text-[#030616] mb-2">{item.title}</h3>
                       <p className="text-sm text-gray-600 leading-relaxed">{item.text}</p>
                     </div>
                   </div>
@@ -395,7 +408,7 @@ function HomePage() {
           <div className="border-t border-gray-200 pt-16 relative mt-12">
             <FadeInSection>
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-center">
-                <h2 className="text-3xl font-serif font-semibold text-[#0B1528]">Nossos serviços</h2>
+                <h2 className="text-3xl font-bold text-[#030616]">Nossos serviços</h2>
                 <div className="w-12 h-0.5 bg-[#C5A880] mx-auto mt-3"></div>
               </div>
             </FadeInSection>
@@ -410,9 +423,9 @@ function HomePage() {
                 <FadeInSection key={idx} delay={idx * 150}>
                   <div className="border border-gray-100 shadow-sm p-8 flex flex-col items-start hover:shadow-md transition-all duration-300 hover:-translate-y-1 rounded-md bg-white h-full">
                     <srv.icon className="w-10 h-10 text-[#C5A880] mb-6" strokeWidth={1.5} />
-                    <h3 className="text-xl font-serif font-bold text-[#0B1528] mb-3">{srv.title}</h3>
+                    <h3 className="text-xl font-bold text-[#030616] mb-3">{srv.title}</h3>
                     <p className="text-sm text-gray-600 mb-8 flex-grow leading-relaxed">{srv.desc}</p>
-                    <Link to="/contato" className="text-[#C5A880] font-semibold text-sm flex items-center hover:underline group mt-auto">
+                    <Link to="/contato" className="text-[#C5A880] font-bold text-sm flex items-center hover:underline group mt-auto">
                       Saiba mais <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </div>
@@ -427,21 +440,21 @@ function HomePage() {
       {/* =========================================
           5. BANNER MISTO (Imóveis + Seguros)
           ========================================= */}
-      <section className="bg-[#0B1528] text-white py-24 relative overflow-hidden">
+      <section className="bg-[#030616] text-white py-24 relative overflow-hidden font-sans">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A880] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         
         <div className="container mx-auto px-4 relative z-10 text-center">
           <FadeInSection>
-            <p className="text-[#C5A880] font-semibold tracking-[0.25em] uppercase text-sm mb-4">
+            <p className="text-[#C5A880] font-bold tracking-[0.25em] uppercase text-sm mb-4">
               Uma empresa. Duas especialidades.
             </p>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8">
               Imóveis <span className="text-gray-400 font-light">+</span> Seguros
             </h2>
             <p className="max-w-2xl mx-auto text-white/80 text-lg mb-10 leading-relaxed">
               Proteja o seu novo património no momento da aquisição. Oferecemos soluções completas em seguros residenciais, comerciais, de vida e consórcios.
             </p>
-            <Button size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
+            <Button size="lg" className="bg-[#C5A880] text-white font-bold hover:bg-[#b0946d] px-8 py-6 text-lg transition-all rounded-sm">
               Conheça a Pallaro Seguros
             </Button>
           </FadeInSection>
@@ -451,9 +464,9 @@ function HomePage() {
       {/* =========================================
           6. COMO FUNCIONA (Passo a passo)
           ========================================= */}
-      <section className="container mx-auto px-4 py-24">
+      <section className="container mx-auto px-4 py-24 font-sans">
         <FadeInSection>
-          <h2 className="text-center text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif mb-16">
+          <h2 className="text-center text-3xl font-bold text-[#030616] md:text-4xl mb-16">
             Como funciona
           </h2>
         </FadeInSection>
@@ -473,12 +486,12 @@ function HomePage() {
               <FadeInSection key={item.step} delay={index * 150}>
                 <div className="flex flex-col items-center text-center relative group">
                   <div className="h-20 w-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center relative mb-6 transition-all duration-300 group-hover:border-[#C5A880] shadow-sm">
-                    <item.icon className="h-8 w-8 text-[#0B1528]" />
-                    <span className="absolute -bottom-2 bg-[#C5A880] text-[#0B1528] text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
+                    <item.icon className="h-8 w-8 text-[#030616]" />
+                    <span className="absolute -bottom-2 bg-[#C5A880] text-white text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
                       {item.step}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-[#0B1528] max-w-[140px] leading-tight">
+                  <h3 className="font-bold text-[#030616] max-w-[140px] leading-tight">
                     {item.title}
                   </h3>
                 </div>
@@ -491,11 +504,11 @@ function HomePage() {
       {/* =========================================
           7. DEPOIMENTOS (Carrossel Interativo)
           ========================================= */}
-      <section className="bg-[#F8F9FA] py-24">
+      <section className="bg-[#F8F9FA] py-24 font-sans">
         <div className="container mx-auto px-4">
           <FadeInSection>
             <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-              <h2 className="text-3xl font-semibold text-[#0B1528] md:text-4xl font-serif text-center md:text-left">
+              <h2 className="text-3xl font-bold text-[#030616] md:text-4xl text-center md:text-left">
                 O que nossos clientes dizem
               </h2>
               <div className="flex gap-3">
@@ -538,7 +551,7 @@ function HomePage() {
                       {review.text}
                     </p>
                   </div>
-                  <h4 className="font-bold text-[#0B1528] font-serif">{review.name}</h4>
+                  <h4 className="font-bold text-[#030616]">{review.name}</h4>
                 </div>
               ))}
             </div>
@@ -550,17 +563,17 @@ function HomePage() {
       {/* =========================================
           8. CTA FINAL DE AVALIAÇÃO
           ========================================= */}
-      <section className="container mx-auto px-4 py-16 mb-8">
+      <section className="container mx-auto px-4 py-16 mb-8 font-sans">
         <FadeInSection>
-          <div className="relative isolate overflow-hidden rounded-2xl bg-[#0B1528] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="relative isolate overflow-hidden rounded-2xl bg-[#030616] px-8 py-16 md:px-16 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
             <div
               className="absolute inset-0 -z-10 bg-cover bg-center opacity-20"
               style={{ backgroundImage: "url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1920')" }}
             />
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0B1528] via-[#0B1528]/90 to-transparent"></div>
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030616] via-[#030616]/90 to-transparent"></div>
 
             <div className="relative z-10 text-center md:text-left max-w-xl">
-              <h2 className="text-3xl font-serif font-bold text-white md:text-4xl">
+              <h2 className="text-3xl font-bold text-white md:text-4xl">
                 Quer vender seu imóvel?
               </h2>
               <p className="mt-4 text-white/80 text-lg">
@@ -569,7 +582,7 @@ function HomePage() {
             </div>
             
             <div className="relative z-10 shrink-0">
-              <Button asChild size="lg" className="bg-[#C5A880] text-[#0B1528] font-bold hover:bg-[#b0946d] px-10 py-7 text-lg transition-all rounded-sm shadow-xl hover:-translate-y-1">
+              <Button asChild size="lg" className="bg-[#C5A880] text-white font-bold hover:bg-[#b0946d] px-10 py-7 text-lg transition-all rounded-sm shadow-xl hover:-translate-y-1">
                 <Link to="/anunciar-imovel">Solicitar avaliação</Link>
               </Button>
             </div>
