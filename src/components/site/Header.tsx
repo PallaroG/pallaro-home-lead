@@ -86,10 +86,10 @@ export function Header() {
 
   return (
     <header 
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed top-0 z-50 w-full transition-all duration-300 font-sans ${
         solidHeader 
-          ? "bg-[#0B1528] shadow-lg py-2"
-          : "bg-gradient-to-b from-[#0B1528]/90 to-transparent py-6"
+          ? "bg-[#030616] shadow-lg py-2"
+          : "bg-gradient-to-b from-[#030616]/90 to-transparent py-6"
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-4">
@@ -111,10 +111,10 @@ export function Header() {
               key={item.label}
               to={item.to}
               onClick={(e) => handleNavClick(e, item)}
-              className={`px-1 py-2 text-sm font-medium tracking-wide transition-all ${
+              className={`px-1 py-2 text-sm font-bold tracking-wide transition-all ${
                 activeItem === item.label
-                  ? "text-[#C5A880] border-b-2 border-[#C5A880]"
-                  : "text-white/90 hover:text-[#C5A880]"
+                  ? "text-[#d99f2d] border-b-2 border-[#d99f2d]"
+                  : "text-white/90 hover:text-[#d99f2d]"
               }`}
             >
               {item.label}
@@ -125,7 +125,7 @@ export function Header() {
         <div className="hidden lg:flex items-center gap-5">
           <Button
             asChild
-            className="bg-[#C5A880] text-[#0B1528] font-semibold hover:bg-[#b0946d] rounded-sm px-6 py-5 transition-all"
+            className="bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] text-[#030616] font-bold hover:brightness-110 border-0 rounded-sm px-6 py-5 transition-all"
           >
             <Link to="/anunciar-imovel">Avaliar meu Imóvel</Link>
           </Button>
@@ -148,12 +148,12 @@ export function Header() {
               variant="ghost"
               size="icon"
               aria-label="Abrir menu"
-              className="text-white hover:bg-white/10 hover:text-[#C5A880]"
+              className="text-white hover:bg-white/10 hover:text-[#d99f2d]"
             >
               <Menu className="h-7 w-7" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-72 bg-[#0B1528] border-l-white/10 text-white">
+          <SheetContent side="right" className="w-72 bg-[#030616] border-l-white/10 text-white font-sans">
             <SheetTitle className="text-white text-left mt-4">
                {/* USANDO A LOGO IMPORTADA AQUI TAMBÉM */}
                <img src={logoImg} alt="Pallaro" className="h-8 object-contain" />
@@ -164,8 +164,8 @@ export function Header() {
                   key={item.label}
                   to={item.to}
                   onClick={(e) => handleNavClick(e, item)}
-                  className={`rounded-md px-3 py-3 text-base font-medium transition-colors ${
-                    activeItem === item.label ? "text-[#C5A880] bg-white/5" : "text-white/90 hover:bg-white/10 hover:text-[#C5A880]"
+                  className={`rounded-md px-3 py-3 text-base font-bold transition-colors ${
+                    activeItem === item.label ? "text-[#d99f2d] bg-white/5" : "text-white/90 hover:bg-white/10 hover:text-[#d99f2d]"
                   }`}
                 >
                   {item.label}
@@ -173,7 +173,7 @@ export function Header() {
               ))}
               <Button
                 asChild
-                className="mt-6 bg-[#C5A880] text-[#0B1528] font-semibold hover:bg-[#b0946d] w-full"
+                className="mt-6 bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] text-[#030616] font-bold hover:brightness-110 border-0 w-full"
               >
                 <Link to="/anunciar-imovel" onClick={() => setOpen(false)}>
                   Avaliar meu Imóvel
