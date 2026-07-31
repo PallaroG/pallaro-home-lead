@@ -304,62 +304,62 @@ function HomePage() {
       {/* =========================================
           3. ACESSOS RÁPIDOS
           ========================================= */}
-      <section className="container mx-auto px-4 pt-8 pb-16 font-sans">
+      <section className="container mx-auto px-4 pt-12 pb-16 font-sans">
         <FadeInSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 lg:divide-x divide-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 xl:gap-6 lg:divide-x divide-gray-200">
             
             {/* Item 1 */}
-            <Link to="/imoveis" className="flex items-center gap-4 lg:px-4 group">
-              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
-                <Home className="h-5 w-5" />
+            <Link to="/imoveis" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+              <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <Home className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
               <div>
-                <h3 className="font-bold text-[#030616] text-sm leading-tight">Imóveis<br/>para Comprar</h3>
-                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Veja as melhores<br/>oportunidades</p>
+                <h3 className="font-bold text-[#030616] text-base xl:text-lg leading-tight">Imóveis<br/>para Comprar</h3>
+                <p className="text-xs xl:text-sm text-gray-500 mt-1.5 leading-tight">Veja as melhores<br/>oportunidades</p>
               </div>
             </Link>
             
             {/* Item 2 */}
-            <Link to="/imoveis" className="flex items-center gap-4 lg:px-4 group">
-              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
-                <Key className="h-5 w-5" />
+            <Link to="/imoveis" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+              <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <Key className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
               <div>
-                <h3 className="font-bold text-[#030616] text-sm leading-tight">Imóveis<br/>para Alugar</h3>
-                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Encontre seu novo<br/>lar para locação</p>
+                <h3 className="font-bold text-[#030616] text-base xl:text-lg leading-tight">Imóveis<br/>para Alugar</h3>
+                <p className="text-xs xl:text-sm text-gray-500 mt-1.5 leading-tight">Encontre seu novo<br/>lar para locação</p>
               </div>
             </Link>
 
             {/* Item 3 */}
-            <Link to="/anunciar-imovel" className="flex items-center gap-4 lg:px-4 group">
-              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
-                <ClipboardList className="h-5 w-5" />
+            <Link to="/anunciar-imovel" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+              <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <ClipboardList className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
               <div>
-                <h3 className="font-bold text-[#030616] text-sm leading-tight">Anuncie seu<br/>Imóvel</h3>
-                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Cadastre seu imóvel<br/>gratuitamente</p>
+                <h3 className="font-bold text-[#030616] text-base xl:text-lg leading-tight">Anuncie seu<br/>Imóvel</h3>
+                <p className="text-xs xl:text-sm text-gray-500 mt-1.5 leading-tight">Cadastre seu imóvel<br/>gratuitamente</p>
               </div>
             </Link>
 
             {/* Item 4 */}
-            <Link to="/contato" className="flex items-center gap-4 lg:px-4 group">
-              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
-                <ShieldCheck className="h-5 w-5" />
+            <Link to="/contato" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+              <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <ShieldCheck className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
               <div>
-                <h3 className="font-bold text-[#030616] text-sm leading-tight">Seguro Fiança</h3>
-                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Alugue com mais<br/>segurança e<br/>tranquilidade</p>
+                <h3 className="font-bold text-[#030616] text-base xl:text-lg leading-tight">Seguro Fiança</h3>
+                <p className="text-xs xl:text-sm text-gray-500 mt-1.5 leading-tight">Alugue com mais<br/>segurança e<br/>tranquilidade</p>
               </div>
             </Link>
 
             {/* Item 5 */}
-            <Link to="/contato" className="flex items-center gap-4 lg:px-4 group">
-              <div className="h-12 w-12 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
-                <Calculator className="h-5 w-5" />
+            <Link to="/contato" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+              <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
+                <Calculator className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
               <div>
-                <h3 className="font-bold text-[#030616] text-sm leading-tight">Simule seu<br/>Financiamento</h3>
-                <p className="text-[11px] text-gray-500 mt-1 leading-tight">Faça uma simulação<br/>de forma rápida</p>
+                <h3 className="font-bold text-[#030616] text-base xl:text-lg leading-tight">Simule seu<br/>Financiamento</h3>
+                <p className="text-xs xl:text-sm text-gray-500 mt-1.5 leading-tight">Faça uma simulação<br/>de forma rápida</p>
               </div>
             </Link>
 
