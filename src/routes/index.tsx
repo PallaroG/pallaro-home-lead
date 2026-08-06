@@ -4,9 +4,6 @@ import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 import { 
   Search, 
   Home, 
-  Building, 
-  Building2, 
-  Map, 
   ArrowRight,
   UserCircle,
   ShieldCheck,
@@ -24,7 +21,8 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
-  Calculator
+  Calculator,
+  Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -241,6 +239,7 @@ function HomePage() {
             
             <div className="flex mb-6 gap-2">
               <button 
+                type="button"
                 onClick={() => setActiveTab("comprar")}
                 className={`px-6 py-2.5 text-sm font-bold flex items-center gap-2 rounded-t-md border-b-2 transition-all ${
                   activeTab === "comprar" 
@@ -251,6 +250,7 @@ function HomePage() {
                 <Home className="h-4 w-4" /> COMPRAR
               </button>
               <button 
+                type="button"
                 onClick={() => setActiveTab("alugar")}
                 className={`px-6 py-2.5 text-sm font-bold flex items-center gap-2 rounded-t-md border-b-2 transition-all ${
                   activeTab === "alugar" 
@@ -360,7 +360,7 @@ function HomePage() {
       <section className="container mx-auto px-4 pt-12 pb-16 font-sans">
         <FadeInSection>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 xl:gap-6 lg:divide-x divide-gray-200">
-            <Link to="/imoveis" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+            <Link to="/imoveis" search={{ purpose: "comprar" }} className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <Home className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
@@ -370,7 +370,7 @@ function HomePage() {
               </div>
             </Link>
             
-            <Link to="/imoveis" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
+            <Link to="/imoveis" search={{ purpose: "alugar" }} className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <Key className="h-6 w-6 xl:h-7 xl:w-7" />
               </div>
