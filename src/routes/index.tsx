@@ -1,8 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
+import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 import { 
   Search, 
   Home, 
+  Building, 
+  Building2, 
+  Map, 
   ArrowRight,
   UserCircle,
   ShieldCheck,
@@ -20,8 +24,7 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
-  Calculator,
-  Building
+  Calculator
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cities, properties } from "@/data/properties";
+import { properties } from "@/data/properties";
 import { PropertyCard } from "@/components/property/PropertyCard";
 
 export const Route = createFileRoute("/")({
@@ -46,6 +49,9 @@ export const Route = createFileRoute("/")({
   }),
   component: HomePage,
 });
+
+// A biblioteca 'places' do Google precisa ser declarada fora do componente para não recarregar
+const libraries: any = ["places"];
 
 // =========================================
 // COMPONENTE DE ANIMAÇÃO (FADE IN ON SCROLL)
@@ -65,7 +71,6 @@ function FadeInSection({ children, delay = 0 }: { children: React.ReactNode, del
     }, { threshold: 0.1 });
 
     if (domRef.current) observer.observe(domRef.current);
-    
     return () => observer.disconnect();
   }, []);
 
@@ -98,30 +103,6 @@ const testimonials = [
   {
     name: "Rafael Souza",
     text: '"Sabe aquela sensação de que o corretor realmente tá te ouvindo? Foi assim desde o primeiro dia. Achei meu cantinho perfeito."'
-  },
-  {
-    name: "Amanda Ferreira",
-    text: '"Aluguei minha sala comercial com eles e foi super tranquilo. O contrato é claro, sem letrinhas miúdas. Sensacional."'
-  },
-  {
-    name: "Marcos Lima",
-    text: '"Profissionais demais! Tiraram umas fotos incríveis da minha casa e em duas semanas já tínhamos negócio fechado."'
-  },
-  {
-    name: "Beatriz Rocha",
-    text: '"Eles entenderam de cara que eu precisava de um lugar perto do metrô. Não ficaram me empurrando imóvel nada a ver. Top!"'
-  },
-  {
-    name: "Tiago Nogueira",
-    text: '"Sempre achei que mexer com financiamento era um pesadelo, mas o pessoal me explicou tudo desenhadinho. Deu tudo certo!"'
-  },
-  {
-    name: "Roberto Silva",
-    text: '"Comprei pra investir e o retorno foi ótimo. A avaliação que eles fazem do mercado é muito pé no chão, sem ilusão."'
-  },
-  {
-    name: "Fernanda Oliveira",
-    text: '"Zero dor de cabeça. Desde a primeira visita até a entrega das chaves, me senti super acompanhada. Vocês arrasam!"'
   }
 ];
 
@@ -129,21 +110,83 @@ function HomePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("comprar");
   
-  const [type, setType] = useState<string>("");
+  // Estados do Formulário
   const [city, setCity] = useState<string>("");
+  const [neighborhood, setNeighborhood] = useState<string>("");
+  const [type, setType] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
 
   const carouselRef = useRef<HTMLDivElement>(null);
-
-  // Filtra apenas os imóveis marcados como destaque
   const featured = properties.filter((p) => p.featured);
 
+  // =========================================
+  // INTEGRAÇÃO COM GOOGLE MAPS
+  // =========================================
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
+    libraries,
+  });
+
+  const [cityAutocomplete, setCityAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [bairroAutocomplete, setBairroAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [cityBounds, setCityBounds] = useState<google.maps.LatLngBounds | undefined>(undefined);
+
+  // Carrega o Autocomplete de Cidade
+  const onCityLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocomplete.setTypes(["(cities)"]);
+    autocomplete.setComponentRestrictions({ country: "br" });
+    setCityAutocomplete(autocomplete);
+  };
+
+  // Quando o usuário escolhe uma Cidade
+  const onCityPlaceChanged = () => {
+    if (cityAutocomplete !== null) {
+      const place = cityAutocomplete.getPlace();
+      setCity(place.name || "");
+      
+      // Salva a área (limites) da cidade para restringir o bairro depois
+      if (place.geometry?.viewport) {
+        setCityBounds(place.geometry.viewport);
+        // Atualiza os limites do campo de bairro, se ele já estiver carregado
+        if (bairroAutocomplete) {
+          bairroAutocomplete.setBounds(place.geometry.viewport);
+          bairroAutocomplete.setOptions({ strictBounds: true });
+        }
+      }
+    }
+  };
+
+  // Carrega o Autocomplete de Bairro
+  const onBairroLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocomplete.setTypes(["neighborhood"]); // API usa esse termo para bairros
+    autocomplete.setComponentRestrictions({ country: "br" });
+    if (cityBounds) {
+      autocomplete.setBounds(cityBounds);
+      autocomplete.setOptions({ strictBounds: true });
+    }
+    setBairroAutocomplete(autocomplete);
+  };
+
+  const onBairroPlaceChanged = () => {
+    if (bairroAutocomplete !== null) {
+      const place = bairroAutocomplete.getPlace();
+      setNeighborhood(place.name || "");
+    }
+  };
+
+  // =========================================
+  // ENVIO DO FORMULÁRIO
+  // =========================================
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     navigate({
       to: "/imoveis",
       search: {
+        purpose: activeTab as any,
         type: (type || undefined) as any,
         city: city || undefined,
+        neighborhood: neighborhood || undefined,
+        price: price || undefined
       },
     });
   }
@@ -196,7 +239,6 @@ function HomePage() {
         <FadeInSection delay={300}>
           <div className="bg-[#030616] rounded-xl shadow-2xl p-6 border border-white/5">
             
-            {/* Tabs */}
             <div className="flex mb-6 gap-2">
               <button 
                 onClick={() => setActiveTab("comprar")}
@@ -220,46 +262,54 @@ function HomePage() {
               </button>
             </div>
 
-            {/* Formulário */}
             <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-4 items-center">
               
-              {/* Caixa branca com os inputs */}
               <div className="flex-1 w-full bg-white rounded-md grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-gray-200">
                 
-                {/* Cidade */}
+                {/* CIDADE - GOOGLE MAPS */}
                 <div className="px-4 py-3 flex flex-col justify-center">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Cidade</label>
-                  <div className="flex items-center">
-                    <Select value={city} onValueChange={setCity}>
-                      <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
-                        <SelectValue placeholder="Selecione a cidade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <MapPin className="h-4 w-4 text-gray-400 shrink-0 ml-2" />
+                  <div className="flex items-center relative">
+                    {isLoaded ? (
+                      <Autocomplete onLoad={onCityLoad} onPlaceChanged={onCityPlaceChanged} className="w-full">
+                        <input
+                          type="text"
+                          placeholder="Digite a cidade..."
+                          className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 focus:outline-none shadow-none text-sm placeholder:font-normal placeholder:text-gray-400"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                        />
+                      </Autocomplete>
+                    ) : (
+                      <input disabled placeholder="Carregando..." className="w-full bg-transparent border-0 p-0 text-sm text-gray-400" />
+                    )}
+                    <MapPin className="h-4 w-4 text-gray-400 shrink-0 ml-2 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 </div>
 
-                {/* Bairro */}
+                {/* BAIRRO - GOOGLE MAPS */}
                 <div className="px-4 py-3 flex flex-col justify-center">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Bairro</label>
-                  <div className="flex items-center">
-                    <Select>
-                      <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
-                        <SelectValue placeholder="Selecione o bairro" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="centro">Centro</SelectItem>
-                        <SelectItem value="jardins">Jardins</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <MapPin className="h-4 w-4 text-gray-400 shrink-0 ml-2" />
+                  <div className="flex items-center relative">
+                    {isLoaded ? (
+                      <Autocomplete onLoad={onBairroLoad} onPlaceChanged={onBairroPlaceChanged} className="w-full">
+                        <input
+                          type="text"
+                          placeholder={city ? "Digite o bairro..." : "Selecione a cidade antes"}
+                          disabled={!city}
+                          className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 focus:outline-none shadow-none text-sm disabled:opacity-50 placeholder:font-normal placeholder:text-gray-400"
+                          value={neighborhood}
+                          onChange={(e) => setNeighborhood(e.target.value)}
+                        />
+                      </Autocomplete>
+                    ) : (
+                      <input disabled placeholder="Carregando..." className="w-full bg-transparent border-0 p-0 text-sm text-gray-400" />
+                    )}
+                    <MapPin className="h-4 w-4 text-gray-400 shrink-0 ml-2 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 </div>
 
-                {/* Tipo de Imóvel */}
+                {/* TIPO DE IMÓVEL */}
                 <div className="px-4 py-3 flex flex-col justify-center">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Tipo de Imóvel</label>
                   <Select value={type} onValueChange={setType}>
@@ -275,19 +325,22 @@ function HomePage() {
                   </Select>
                 </div>
 
-                {/* Faixa de Preço */}
+                {/* FAIXA DE PREÇO (MISTO: DIGITAR + SELECIONAR) */}
                 <div className="px-4 py-3 flex flex-col justify-center">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Faixa de Preço</label>
-                  <Select>
-                    <SelectTrigger className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 shadow-none text-sm">
-                      <SelectValue placeholder="Valor mínimo - máximo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ate-500k">Até R$ 500.000</SelectItem>
-                      <SelectItem value="500k-1m">R$ 500.000 a R$ 1.000.000</SelectItem>
-                      <SelectItem value="acima-1m">Acima de R$ 1.000.000</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <input
+                    list="opcoes-preco"
+                    placeholder="Valor mínimo - máximo"
+                    className="w-full bg-transparent border-0 p-0 h-auto text-[#030616] font-semibold focus:ring-0 focus:outline-none shadow-none text-sm placeholder:font-normal placeholder:text-gray-400"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                  <datalist id="opcoes-preco">
+                    <option value="Até R$ 250.000" />
+                    <option value="R$ 250.000 a R$ 500.000" />
+                    <option value="R$ 500.000 a R$ 1.000.000" />
+                    <option value="Acima de R$ 1.000.000" />
+                  </datalist>
                 </div>
               </div>
 
@@ -307,8 +360,6 @@ function HomePage() {
       <section className="container mx-auto px-4 pt-12 pb-16 font-sans">
         <FadeInSection>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 xl:gap-6 lg:divide-x divide-gray-200">
-            
-            {/* Item 1 */}
             <Link to="/imoveis" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <Home className="h-6 w-6 xl:h-7 xl:w-7" />
@@ -319,7 +370,6 @@ function HomePage() {
               </div>
             </Link>
             
-            {/* Item 2 */}
             <Link to="/imoveis" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <Key className="h-6 w-6 xl:h-7 xl:w-7" />
@@ -330,7 +380,6 @@ function HomePage() {
               </div>
             </Link>
 
-            {/* Item 3 */}
             <Link to="/anunciar-imovel" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <ClipboardList className="h-6 w-6 xl:h-7 xl:w-7" />
@@ -341,7 +390,6 @@ function HomePage() {
               </div>
             </Link>
 
-            {/* Item 4 */}
             <Link to="/contato" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <ShieldCheck className="h-6 w-6 xl:h-7 xl:w-7" />
@@ -352,7 +400,6 @@ function HomePage() {
               </div>
             </Link>
 
-            {/* Item 5 */}
             <Link to="/contato" className="flex items-center gap-4 xl:gap-5 lg:px-2 xl:px-4 group">
               <div className="h-14 w-14 xl:h-16 xl:w-16 rounded-full border-2 border-[#d99f2d] flex items-center justify-center text-[#d99f2d] group-hover:bg-[#d99f2d] group-hover:text-white transition-colors shrink-0">
                 <Calculator className="h-6 w-6 xl:h-7 xl:w-7" />
@@ -362,7 +409,6 @@ function HomePage() {
                 <p className="text-xs xl:text-sm text-gray-500 mt-1.5 leading-tight">Faça uma simulação<br/>de forma rápida</p>
               </div>
             </Link>
-
           </div>
         </FadeInSection>
       </section>
@@ -377,7 +423,6 @@ function HomePage() {
               <h2 className="text-xl md:text-2xl font-bold text-[#030616] uppercase tracking-wide">
                 Imóveis em destaque
               </h2>
-              {/* Underline dourado do título */}
               <div className="absolute -bottom-[17px] left-0 w-16 h-1 bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a]"></div>
             </div>
             <Link to="/imoveis" className="flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-[#d99f2d] uppercase tracking-wider transition-colors">
@@ -400,7 +445,6 @@ function HomePage() {
           ========================================= */}
       <section id="sobre-nos" className="w-full bg-white py-24 px-4 md:px-8 font-sans">
         <div className="container mx-auto max-w-7xl">
-          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
             <FadeInSection>
               <div className="flex flex-col justify-start">
@@ -440,164 +484,11 @@ function HomePage() {
               ))}
             </div>
           </div>
-
-          <div className="border-t border-gray-200 pt-16 relative mt-12">
-            <FadeInSection>
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-center">
-                <h2 className="text-3xl font-bold text-[#030616]">Nossos serviços</h2>
-                <div className="w-12 h-0.5 bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] mx-auto mt-3"></div>
-              </div>
-            </FadeInSection>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-              {[
-                { icon: Key, title: "Compra", desc: "Encontramos o imóvel ideal para você com as melhores condições." },
-                { icon: TrendingUp, title: "Venda", desc: "Avaliação profissional e divulgação estratégica para vender seu imóvel." },
-                { icon: Home, title: "Locação", desc: "Segurança e praticidade para proprietário e inquilino." },
-                { icon: Building, title: "Investimentos", desc: "Imóveis selecionados para gerar renda e valorização do seu patrimônio." }
-              ].map((srv, idx) => (
-                <FadeInSection key={idx} delay={idx * 150}>
-                  <div className="border border-gray-100 shadow-sm p-8 flex flex-col items-start hover:shadow-md transition-all duration-300 hover:-translate-y-1 rounded-md bg-white h-full">
-                    <srv.icon className="w-10 h-10 text-[#d99f2d] mb-6" strokeWidth={1.5} />
-                    <h3 className="text-xl font-bold text-[#030616] mb-3">{srv.title}</h3>
-                    <p className="text-sm text-gray-600 mb-8 flex-grow leading-relaxed">{srv.desc}</p>
-                    <Link to="/contato" className="text-[#d99f2d] font-bold text-sm flex items-center hover:underline group mt-auto">
-                      Saiba mais <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
-                </FadeInSection>
-              ))}
-            </div>
-          </div>
-
         </div>
       </section>
 
       {/* =========================================
-          6. BANNER MISTO (Imóveis + Seguros)
-          ========================================= */}
-      <section className="bg-[#030616] text-white py-24 relative overflow-hidden font-sans">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#d99f2d] rounded-full blur-[120px] opacity-20 -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <FadeInSection>
-            <p className="text-[#d99f2d] font-bold tracking-[0.25em] uppercase text-sm mb-4">
-              Uma empresa. Duas especialidades.
-            </p>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8">
-              Imóveis <span className="text-gray-400 font-light">+</span> Seguros
-            </h2>
-            <p className="max-w-2xl mx-auto text-white/80 text-lg mb-10 leading-relaxed">
-              Proteja o seu novo património no momento da aquisição. Oferecemos soluções completas em seguros residenciais, comerciais, de vida e consórcios.
-            </p>
-            <Button size="lg" className="bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] text-[#030616] font-bold hover:brightness-110 px-8 py-6 text-lg transition-all rounded-sm border-0">
-              Conheça a Pallaro Seguros
-            </Button>
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* =========================================
-          7. COMO FUNCIONA (Passo a passo)
-          ========================================= */}
-      <section className="container mx-auto px-4 py-24 font-sans">
-        <FadeInSection>
-          <h2 className="text-center text-3xl font-bold text-[#030616] md:text-4xl mb-16">
-            Como funciona
-          </h2>
-        </FadeInSection>
-        
-        <div className="relative">
-          <div className="hidden lg:block absolute top-10 left-[8%] right-[8%] h-[2px] bg-gray-200 -z-10"></div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {[
-              { step: "01", icon: ClipboardList, title: "Conte o que procura" },
-              { step: "02", icon: Search, title: "Receba imóveis selecionados" },
-              { step: "03", icon: CalendarCheck, title: "Agende visita" },
-              { step: "04", icon: Handshake, title: "Negociação" },
-              { step: "05", icon: FileText, title: "Documentação" },
-              { step: "06", icon: Key, title: "Entrega das chaves" },
-            ].map((item, index) => (
-              <FadeInSection key={item.step} delay={index * 150}>
-                <div className="flex flex-col items-center text-center relative group">
-                  <div className="h-20 w-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center relative mb-6 transition-all duration-300 group-hover:border-[#d99f2d] shadow-sm">
-                    <item.icon className="h-8 w-8 text-[#030616]" />
-                    <span className="absolute -bottom-2 bg-gradient-to-r from-[#d99f2d] to-[#e8bc4a] text-[#030616] text-xs font-bold px-2 py-0.5 rounded-full border-2 border-white">
-                      {item.step}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-[#030616] max-w-[140px] leading-tight">
-                    {item.title}
-                  </h3>
-                </div>
-              </FadeInSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================
-          8. DEPOIMENTOS (Carrossel Interativo)
-          ========================================= */}
-      <section className="bg-[#F8F9FA] py-24 font-sans">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-              <h2 className="text-3xl font-bold text-[#030616] md:text-4xl text-center md:text-left">
-                O que nossos clientes dizem
-              </h2>
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => scrollTestimonials('left')} 
-                  className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#d99f2d] hover:text-white hover:border-[#d99f2d] transition-all"
-                  aria-label="Ver anterior"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-                <button 
-                  onClick={() => scrollTestimonials('right')} 
-                  className="h-12 w-12 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#d99f2d] hover:text-white hover:border-[#d99f2d] transition-all"
-                  aria-label="Ver próximo"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
-              </div>
-            </div>
-          </FadeInSection>
-          
-          <FadeInSection delay={200}>
-            <div 
-              ref={carouselRef}
-              className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 [&::-webkit-scrollbar]:hidden"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {testimonials.map((review, i) => (
-                <div 
-                  key={i} 
-                  className="min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] snap-center shrink-0 bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex gap-1 mb-6">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className="h-5 w-5 fill-[#d99f2d] text-[#d99f2d]" />
-                      ))}
-                    </div>
-                    <p className="text-gray-600 leading-relaxed italic mb-8">
-                      {review.text}
-                    </p>
-                  </div>
-                  <h4 className="font-bold text-[#030616]">{review.name}</h4>
-                </div>
-              ))}
-            </div>
-          </FadeInSection>
-          
-        </div>
-      </section>
-
-      {/* =========================================
-          9. CTA FINAL DE AVALIAÇÃO
+          6. CTA FINAL DE AVALIAÇÃO
           ========================================= */}
       <section className="container mx-auto px-4 py-16 mb-8 font-sans">
         <FadeInSection>
